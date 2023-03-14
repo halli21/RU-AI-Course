@@ -1,18 +1,35 @@
 import math
 
-def initalize_board(size = 9):
-    board = [[" " for _ in range(size)] for _ in range(size)]
-    print(board)
+from generator import Sudoku
 
-
-class State:
-    def __init__(self, size):
+class State():
+    def __init__(self, size, hints):
         self.size = size
         self.block_size = int(math.sqrt(size))  # math.sqrt returns float
-        #self.board = [[" " for _ in range(size)] for _ in range(size)]
-        #self.domains = [[list(range(1, size + 1)) for _ in range(size)] for _ in range(size)]
+      
+        self.domains = [[list(range(1, size + 1)) for _ in range(size)] for _ in range(size)]
 
-        self.board = [[list(range(1, size + 1)) for _ in range(size)] for _ in range(size)]
+        self.generator = Sudoku(size, hints)
+        self.board = self.generator.fillValues()
+        self.update_domain()
+
+    def update_domain(self):
+        for x in range(self.size):
+            for y in range(self.size):
+                if self.board[x][y] != " ":
+                    self.domains[x][y] = [self.board[x][y]]
+
+    def get_value(self, value):
+        value_dict = {10 : "A", 11 : "B", 12 : "C", 13 : "D", 14 : "E", 15 : "F", 16 : "G"}
+
+        if (value == " "):
+            return value
+        
+        elif (int(value) > 9):
+            return value_dict[value]
+
+        return value
+
 
     def __str__(self):
         output = ""
@@ -34,14 +51,10 @@ class State:
 
             for y in range(self.size):
                 if y % self.block_size == 0 or y == 0:
-                    output += f"{edge_color}|"
+                    output += f"{edge_color}| {grid_color}{self.get_value(self.board[x][y])} "
                 else:
-                    output += f"{grid_color}|"
+                    output += f"{grid_color}| {grid_color}{self.get_value(self.board[x][y])} "
 
-                if len(self.board[x][y]) != 1:
-                    output += "   "
-                else:
-                    output += f" {grid_color}{self.board[x][y][0]} "
                 if y == self.size - 1:
                     output += f"{edge_color}|\n"
 

@@ -1,17 +1,17 @@
 import math
 
 from state import State
+#from agent import MyAgent
 
-class Environment():
+class Environment:
     def __init__(self, size, hints):
         self.current_state = State(size, hints)
         self.size = size
         self.block_size = int(math.sqrt(size))  # math.sqrt returns float
 
 
-    def place_number(self, state, move):
-        x, y, value = move
-        state.board[x][y] = value
+    def get_move(self):
+        pass
 
 
     def reduce_domains(self):
@@ -37,19 +37,5 @@ class Environment():
                             if x != i and y != j and value in self.current_state.domains[x][y]:
                                 self.current_state.domains[x][y].remove(value)
 
+
  
-
-
-
-
-env = Environment(9, 38)
-
-print(env.current_state)
-
-print(env.current_state.domains)
-
-env.reduce_domains()
-
-print(env.current_state)
-
-print(env.current_state.domains)

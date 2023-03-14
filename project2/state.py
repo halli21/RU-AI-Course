@@ -2,22 +2,41 @@ import math
 
 from generator import Sudoku
 
-class State():
+class State:
     def __init__(self, size, hints):
         self.size = size
+
         self.block_size = int(math.sqrt(size))  # math.sqrt returns float
       
         self.domains = [[list(range(1, size + 1)) for _ in range(size)] for _ in range(size)]
 
         self.generator = Sudoku(size, hints)
-        self.board = self.generator.fillValues()
+
+        self.board = None
+
+        self.get_board()
+
         self.update_domain()
+
+    
+    def get_board(self):
+        # The code we borrowed to generate boards doesn´t always find a solution if it messes  
+        # up when putting in the diagonal blocks, this will ensure we always get a board.
+
+        complete = False
+
+        while(complete == False):
+            temp_board, complete = self.generator.fillValues()
+
+        self.board = temp_board
+
 
     def update_domain(self):
         for x in range(self.size):
             for y in range(self.size):
                 if self.board[x][y] != " ":
                     self.domains[x][y] = [self.board[x][y]]
+
 
     def get_value(self, value):
         value_dict = {10 : "A", 11 : "B", 12 : "C", 13 : "D", 14 : "E", 15 : "F", 16 : "G"}

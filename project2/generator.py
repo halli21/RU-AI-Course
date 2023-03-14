@@ -8,10 +8,21 @@ class Sudoku:
 
         self.hints = hints
         self.board = [[" " for _ in range(size)] for _ in range(size)]
+
+
+    
+    def check_valid(self):
+        for x in range(self.size):
+            for y in range(self.size):
+                if self.board[x][y] == " ":
+                    return False
+                
+        return True
      
 
 
     def fillValues(self):
+        complete = False
         # Fill the diagonal of block_size x block_size matrices
         self.fillDiagonal()
  
@@ -19,9 +30,14 @@ class Sudoku:
         self.fillRemaining(0, self.block_size)
  
         # Remove Randomly K digits to make game
-        self.removeKDigits()
+        if self.check_valid():
+            self.get_hints()
+            complete = True
+        else:
+            #RESET
+            self.board = [[" " for _ in range(self.size)] for _ in range(self.size)]
 
-        return self.board
+        return self.board, complete
      
 
 
@@ -105,7 +121,7 @@ class Sudoku:
  
 
 
-    def removeKDigits(self):
+    def get_hints(self):
         count = (self.size * self.size) - self.hints
  
         while (count != 0):
@@ -115,11 +131,21 @@ class Sudoku:
                 count -= 1
                 self.board[i][j] = " "
         return
+    
+
+
+    def printSudoku(self):
+        for i in range(self.size):
+            for j in range(self.size):
+                print(self.board[i][j], end=" ")
+            print()
  
- 
-# Driver code
+
+
+
 if __name__ == "__main__":
-    N = 9
-    K = 17
+    N = 4
+    K = 2
     sudoku = Sudoku(N, K)
     sudoku.fillValues()
+    sudoku.printSudoku()

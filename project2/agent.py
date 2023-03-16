@@ -114,7 +114,8 @@ class Search:
         if self.board[i][j] != " ":
             return self.backtracking_forward_check_search(i, j + 1)
      
-        for num in self.domains[i][j]:
+        domain_list = deepcopy(self.domains[i][j])
+        for num in domain_list:
             if self.checkIfSafe(i, j, num):
                 self.board[i][j] = num
                 temp = deepcopy(self.domains)

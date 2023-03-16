@@ -37,18 +37,8 @@ if __name__ == "__main__":
     env.backtracking_brute()
     print(env.current_state)"""
 
-    board = [[" " for _ in range(4)] for _ in range(4)]
 
-    board[1][0] = 4
-    board[1][1] = 2
-    board[1][2] = 1
-    board[2][0] = 3
-    board[3][1] = 1
-
-    env2 = Environment(4, 5)
-    env2.current_state.board = board
-    env2.current_state.domains = [[list(range(1, 4 + 1)) for _ in range(4)] for _ in range(4)]
-    env2.current_state.update_domain()
+    env2 = Environment(16, 55)
     print(env2.current_state)
     env2.backtracking_forward_check()
     print(env2.current_state)

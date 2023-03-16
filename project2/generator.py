@@ -5,21 +5,17 @@ class Sudoku:
     def __init__(self, size, hints):
         self.size = size 
         self.block_size = int(math.sqrt(size))
-
         self.hints = hints
         self.board = [[" " for _ in range(size)] for _ in range(size)]
 
 
-    
     def check_valid(self):
         for x in range(self.size):
             for y in range(self.size):
                 if self.board[x][y] == " ":
-                    return False
-                
+                    return False    
         return True
      
-
 
     def fillValues(self):
         complete = False

@@ -5,17 +5,11 @@ from generator import Sudoku
 class State:
     def __init__(self, size, hints):
         self.size = size
-
         self.block_size = int(math.sqrt(size))  # math.sqrt returns float
-      
         self.domains = [[list(range(1, size + 1)) for _ in range(size)] for _ in range(size)]
-
         self.generator = Sudoku(size, hints)
-
         self.board = None
-
         self.get_board()
-
         self.update_domain()
 
     

@@ -89,8 +89,8 @@ class Search:
 
         block_x = (xcord // self.block_size) * self.block_size
         block_y = (ycord // self.block_size) * self.block_size
-        for x in range(block_x, block_x + self.block_size):
-            for y in range(block_y, block_y + self.block_size):
+        for x in range(block_y, block_y + self.block_size):
+            for y in range(block_x, block_x + self.block_size):
                 if y != xcord and x != ycord and value in self.domains[x][y]:
                     self.domains[x][y].remove(value)
     

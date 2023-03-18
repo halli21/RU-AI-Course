@@ -351,3 +351,13 @@ class MyAgent(Agent):
         return False
 
   
+
+
+if __name__ == "__main__":
+    agent = MyAgent()
+    env = Environment(3, 5)
+    agent.env = env
+    agent.play_clock = 5
+
+    agent.get_best_move()
+

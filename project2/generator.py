@@ -2,11 +2,13 @@ import random
 import math
  
 class Sudoku:
-    def __init__(self, size, hints):
+    def __init__(self, size, hints, seed=None):
         self.size = size 
         self.block_size = int(math.sqrt(size))
         self.hints = hints
         self.board = [[" " for _ in range(size)] for _ in range(size)]
+
+        self.seed = seed
 
 
     def check_valid(self):
@@ -18,6 +20,11 @@ class Sudoku:
      
 
     def fillValues(self):
+        # FOR TESTING PURPOSES ONLY
+        if self.seed:
+            random.seed(self.seed)
+
+
         complete = False
         # Fill the diagonal of block_size x block_size matrices
         self.fillDiagonal()

@@ -3,26 +3,35 @@ import math
 from generator import Sudoku
 
 class State:
-    def __init__(self, size, hints):
+    def __init__(self, size, hints, seed=None):
         self.size = size
-        self.block_size = int(math.sqrt(size))  # math.sqrt returns float
+        self.block_size = int(math.sqrt(size)) 
+        self.hints = hints
         self.domains = [[list(range(1, size + 1)) for _ in range(size)] for _ in range(size)]
-        self.generator = Sudoku(size, hints)
         self.board = None
+
+        self.seed = seed
+        
         self.get_board()
-        self.update_domain()
+
+
+        
 
     
     def get_board(self):
         # The code we borrowed to generate boards doesn´t always find a solution if it messes  
         # up when putting in the diagonal blocks, this will ensure we always get a board.
 
+        generator = Sudoku(self.size, self.hints, self.seed)
+
         complete = False
 
         while(complete == False):
-            temp_board, complete = self.generator.fillValues()
+            temp_board, complete = generator.fillValues()
 
         self.board = temp_board
+
+        self.update_domain()
 
 
     def update_domain(self):

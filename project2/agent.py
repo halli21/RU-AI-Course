@@ -1,6 +1,9 @@
 import math
+import heapq
 
 from copy import deepcopy
+
+
 
 class Search:
     def __init__(self, size, board, domains):
@@ -8,19 +11,19 @@ class Search:
         self.block_size = int(math.sqrt(size))
         self.board = board
         self.domains = domains
+        self.mrv_queue = []
+        
 
-    #Called in beginning of search to reduce initial domains
-    def reduce_all_domains(self):
-        temp = deepcopy(self.domains)
+    # Helper function that is called in beginning of the search to set up domains and other values
+    def set_up_search(self):
+        count = 0
         for x in range(self.size):
             for y in range(self.size):
-                if len(temp[x][y]) == 1:
-                    self.reduce_domains_value(temp[x][y][0], x, y)
-
-
-
-    def get_move(self):
-        pass
+                if self.board[x][y] != " ":
+                    reduced = self.reduce_domains_value(int(self.board[x][y]), x, y)
+                else:
+                    count += 1
+        return count
         
 
     def checkIfSafe(self, i, j, num):
@@ -49,28 +52,29 @@ class Search:
 
 
 
-
-
 # ------ BACKTRACKING (BRUTE)
 
-    def backtracking_brute_search(self, i = 0, j = 0):
+    def backtracking_brute_search(self, i = 0, j = 0, expansions = 0):
+        expansions += 1
+
         if i == self.size - 1 and j == self.size:
-            return True
+            return True, expansions
      
         if j == self.size:
             i += 1
             j = 0
      
         if self.board[i][j] != " ":
-            return self.backtracking_brute_search(i, j + 1)
+            return self.backtracking_brute_search(i, j + 1, expansions + 1)
      
         for num in range(1, self.size + 1):
             if self.checkIfSafe(i, j, num):
                 self.board[i][j] = num
-                if self.backtracking_brute_search(i, j + 1):
-                    return True
+                success, expansions = self.backtracking_brute_search(i, j + 1, expansions)
+                if success:
+                    return True, expansions
                 self.board[i][j] = " "
-        return False
+        return False, expansions
     
 
 
@@ -80,19 +84,35 @@ class Search:
         # reduce domain of cells in the same row
         for x in range(self.size):
             if x != xcord and value in self.domains[ycord][x]:
-                self.domains[ycord][x].remove(value)
+                if len(self.domains[ycord][x]) > 1:
+                    self.domains[ycord][x].remove(value)
+                    if self.board[ycord][x] == " ":
+                        self.update_mrv_value(ycord, x, len(self.domains[ycord][x]))
+                else:
+                    return False
 
         # reduce domain of cells in the same column
         for y in range(self.size):
             if y != ycord and value in self.domains[y][xcord]:
-                self.domains[y][xcord].remove(value)
-
+                if len(self.domains[y][xcord]) > 1:
+                    self.domains[y][xcord].remove(value)
+                    if self.board[y][xcord] == " ":
+                        self.update_mrv_value(y, xcord, len(self.domains[y][xcord]))
+                else:
+                    return False
+        
         block_x = (xcord // self.block_size) * self.block_size
         block_y = (ycord // self.block_size) * self.block_size
         for x in range(block_y, block_y + self.block_size):
             for y in range(block_x, block_x + self.block_size):
                 if y != xcord and x != ycord and value in self.domains[x][y]:
-                    self.domains[x][y].remove(value)
+                    if len(self.domains[x][y]) > 1:
+                        self.domains[x][y].remove(value)
+                        if self.board[x][y] == " ":
+                            self.update_mrv_value(x, y, len(self.domains[x][y]))
+                    else:
+                        return False
+        return True
     
 
     def forward_check(self):
@@ -103,16 +123,18 @@ class Search:
         return True
     
 
-    def backtracking_forward_check_search(self, i = 0, j = 0):
+    def backtracking_forward_check_search(self, i = 0, j = 0, expansions = 0):
+        expansions += 1
+
         if i == self.size - 1 and j == self.size:
-            return True
+            return True, expansions
      
         if j == self.size:
             i += 1
             j = 0
      
         if self.board[i][j] != " ":
-            return self.backtracking_forward_check_search(i, j + 1)
+            return self.backtracking_forward_check_search(i, j + 1, expansions + 1)
      
         domain_list = deepcopy(self.domains[i][j])
         for num in domain_list:
@@ -121,9 +143,118 @@ class Search:
                 temp = deepcopy(self.domains)
                 self.reduce_domains_value(num, i, j)
                 if self.forward_check():
-                    if self.backtracking_forward_check_search(i, j + 1):
-                        return True
+                    success, expansions = self.backtracking_forward_check_search(i, j + 1, expansions)
+                    if success:
+                        return True, expansions
                 self.domains = temp
                 self.board[i][j] = " "
-        return False
+        return False, expansions
     
+
+
+
+
+# ------------- MRV Heuristic implemented
+
+    def update_mrv_value(self, old_y, old_x, new_mrv_value):
+        new_tuple = (new_mrv_value, old_y, old_x)
+        new_queue = []
+        updated = False
+
+        while len(self.mrv_queue) > 0:
+            item = heapq.heappop(self.mrv_queue)
+            if item[1] == old_y and item[2] == old_x:
+                heapq.heappush(new_queue, new_tuple)
+                updated = True
+            else:
+                heapq.heappush(new_queue, item)
+
+        if not updated:
+            heapq.heappush(new_queue, new_tuple)
+
+        self.mrv_queue = new_queue
+        heapq.heapify(self.mrv_queue)
+
+
+        
+
+
+    def get_mrv_cord(self):
+        y_cord = 0
+        x_cord = 0
+        min_size = self.size
+
+        for y in range(self.size):
+            for x in range(self.size):
+                if self.board[y][x] == " ":
+                    if len(self.domains[y][x]) < min_size:
+                        y_cord = y
+                        x_cord = x
+                        min_size = len(self.domains[y][x])
+
+        return y_cord, x_cord
+
+
+
+# ------ BACKTRACKING MRV (BRUTE)
+
+    def backtracking_brute_search_mrv(self, empty_count, expansions = 0):
+    
+        if empty_count == 0:
+            return True, expansions
+        
+        y, x = self.get_mrv_cord()
+
+        domain_list = deepcopy(self.domains[y][x])
+        
+        for num in domain_list:
+            if self.checkIfSafe(y, x, num):
+                expansions += 1
+                empty_count -= 1
+                self.board[y][x] = num
+                temp = deepcopy(self.domains)
+                self.reduce_domains_value(num, y, x)
+                success, expansions = self.backtracking_brute_search_mrv(empty_count, expansions)
+                if success:
+                    return True, expansions
+                empty_count += 1
+                self.domains = temp
+                self.board[y][x] = " "
+        return False, expansions
+    
+
+
+# ------ BACKTRACKING WITH FORWARD CHECK MRV
+
+
+    def backtracking_forward_check_search_mrv(self, empty_count, expansions = 0):
+
+        if empty_count == 0:
+            return True, expansions
+        
+        if not self.mrv_queue:
+            return False, expansions
+    
+        #y, x = self.get_mrv_cord()
+        mrv_value, y, x = heapq.heappop(self.mrv_queue)
+
+
+        domain_list = deepcopy(self.domains[y][x])
+    
+        for num in domain_list:
+            #if self.checkIfSafe(y, x, num):
+            expansions += 1
+            empty_count -= 1
+            self.board[y][x] = num
+            temp = deepcopy(self.domains)
+            forward_check = self.reduce_domains_value(num, y, x)
+            if forward_check:
+                success, expansions = self.backtracking_forward_check_search_mrv(empty_count, expansions)
+                if success:
+                    return True, expansions
+            empty_count += 1
+            self.domains = temp
+            self.board[y][x] = " "
+        return False, expansions
+
+

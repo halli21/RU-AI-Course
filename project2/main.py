@@ -102,15 +102,3 @@ if __name__ == "__main__":
     print(size, difficulty, alg_choice, heu_choice)
 
 
-
-    env = Environment(4, 2)
-
-    """print(env.current_state)
-
-    print(env.current_state.domains)
-
-    env.reduce_domains()
-
-    print(env.current_state)
-
-    print(env.current_state.domains)"""

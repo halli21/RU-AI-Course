@@ -1,9 +1,8 @@
 import math
+import time
 
 from state import State
 from agent import Search
-
-import time
 
 
 from copy import deepcopy
@@ -28,32 +27,36 @@ class Environment:
         start_time = time.time()
         success, expansions = s.backtracking_brute_search()
         elapsed_time = time.time() - start_time
+        #return expansions, elapsed_time
         self.print_results(expansions, elapsed_time)
 
     def backtracking_forward_check(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()
-        empty_count = s.set_up_search()
+        s.set_up_search()
         success, expansions = s.backtracking_forward_check_search()
         elapsed_time = time.time() - start_time
+        #return expansions, elapsed_time
         self.print_results(expansions, elapsed_time)
 
     def backtracking_brute_mrv(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()
-        empty_count = s.set_up_search()
-        success, expansions = s.backtracking_brute_search_mrv(empty_count)
+        s.set_up_search_mrv()
+        success, expansions = s.backtracking_brute_search_mrv()
         elapsed_time = time.time() - start_time
-        self.print_results(expansions, elapsed_time)
+        #self.print_results(expansions, elapsed_time)
+        return expansions, elapsed_time
 
     def backtracking_forward_check_mrv(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
-        #start_time = time.time()
-        empty_count = s.set_up_search()
         start_time = time.time()
-        success, expansions = s.backtracking_forward_check_search_mrv(empty_count)
+        s.set_up_search_mrv()
+        success, expansions = s.backtracking_forward_check_search_mrv()
         elapsed_time = time.time() - start_time
-        self.print_results(expansions, elapsed_time)
+        #self.print_results(expansions, elapsed_time)
+        return expansions, elapsed_time
+
 
 
 
@@ -62,20 +65,12 @@ class Environment:
 
 if __name__ == "__main__":
     
-    env = Environment(16, 55, 100)
-
-    env2 = Environment(16, 55, 100)
-
-    #env2.current_state.board = deepcopy(env.current_state.board)
-    #env2.current_state.domains = deepcopy(env.current_state.domains)
-
-
+    env = Environment(16, 118, 2)
+  
     print(env.current_state)
-    #env.backtracking_brute()
+    env.backtracking_forward_check_mrv()
     
 
-    print(env2.current_state)
-    #env2.backtracking_forward_check_mrv()
 
    
     

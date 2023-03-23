@@ -41,17 +41,18 @@ class MRV_Queue:
     
 
     def update_node(self, y, x, new_val):
-        current = self.head
-        if current.ycord == y and current.xcord == x:
-            self.head = self.head.next
-            self.size -= 1
-        else:
-            while current.next != None:
-                if current.next.ycord == y and current.next.xcord == x:
-                    current.next = current.next.next
-                    self.size -= 1
-                    break
-                current = current.next
+        if self.head != None:
+            current = self.head
+            if current.ycord == y and current.xcord == x:
+                self.head = self.head.next
+                self.size -= 1
+            else:
+                while current.next != None:
+                    if current.next.ycord == y and current.next.xcord == x:
+                        current.next = current.next.next
+                        self.size -= 1
+                        break
+                    current = current.next
 
         
         new_node = MRV_Node(new_val, y, x)

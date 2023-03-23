@@ -263,13 +263,13 @@ class Search:
                 expansions += 1
                 self.board[node.ycord][node.xcord] = num
                 temp = deepcopy(self.domains)
-                #temp_mrv = deepcopy(self.mrv_queue)
+                temp_mrv = deepcopy(self.mrv_queue)
                 forward_check = self.reduce_domains_value_mrv(num, node.ycord, node.xcord)
                 success, expansions = self.backtracking_search_mrv(expansions)
                 if success:
                     return True, expansions
                 
-                #self.mrv_queue = temp_mrv
+                self.mrv_queue = temp_mrv
                 self.domains = temp
                 self.board[node.ycord][node.xcord] = " "
         return False, expansions
@@ -282,30 +282,27 @@ class Search:
 
     def backtracking_forward_check_search_mrv(self, expansions = 0):
 
-        if not self.mrv_queue:
+        if self.mrv_queue.size == 0:
             return True, expansions
+        
+        node = self.mrv_queue.pop()
 
-        mrv_value, y, x = heapq.heappop(self.mrv_queue)
-
-        domain_list = deepcopy(self.domains[y][x])
+        domain_list = deepcopy(self.domains[node.ycord][node.xcord])
     
         for num in domain_list:
             expansions += 1
-            self.board[y][x] = num
+            self.board[node.ycord][node.xcord] = num
             temp = deepcopy(self.domains)
             temp_mrv = deepcopy(self.mrv_queue)
-            forward_check = self.reduce_domains_value_mrv(num, y, x)
+            forward_check = self.reduce_domains_value_mrv(num, node.ycord, node.xcord)
             if forward_check:
                 success, expansions = self.backtracking_forward_check_search_mrv(expansions)
                 if success:
                     return True, expansions
             self.domains = temp
             self.mrv_queue = temp_mrv
-            self.board[y][x] = " "
+            self.board[node.ycord][node.xcord] = " "
         return False, expansions
-
-
-
 
 
 
@@ -339,39 +336,37 @@ class Search:
         return degree
 
 
+
     def get_next_box(self):
-        tuple_lis = []
+        node_lis = []
 
-        queue_backup = deepcopy(self.mrv_queue)
-
-        mrv_value, y, x = heapq.heappop(self.mrv_queue)
-        value = (mrv_value, y, x)
-        tuple_lis.append(value)
+        mrv_value, y, x = self.mrv_queue.pop()
+        node = MRV_Node(mrv_value, y, x)
+        node_lis.append(node)
 
         while True:
-            next_mrv_value, y, x = heapq.heappop(self.mrv_queue)
-            value = (next_mrv_value, y, x)
-            tuple_lis.append(value)
-            if mrv_value != next_mrv_value:
+            next_node = heapq.heappop(self.mrv_queue)
+            node_lis.append(next_node)
+            if node.value != next_node.value:
                 break
-        
+                    
         max_degree = 0
         max_index = 0
 
-        for index, tup in enumerate(tuple_lis):
-            degree = self.get_degree(tup[1], tup[2])
+        for index, node in enumerate(node_lis):
+            degree = self.get_degree(node.ycord, node.xcord)
             if max_degree < degree:
                 max_degree = degree
                 max_index = index
 
-        degree_tuple = tuple_lis.pop(max_index)
+        degree_tuple = node_lis.pop(max_index)
 
-        for tup in tuple_lis:
-            heapq.heappush(self.mrv_queue, tup)
+        for node in node_lis:
+            heapq.heappush(self.mrv_queue, node)
 
         heapq.heapify(self.mrv_queue)
 
-        self.mrv_queue = queue_backup
+       
 
         return degree_tuple
 

@@ -204,7 +204,9 @@ class Search:
         # reduce domain of cells in the same row
         for x in range(self.size):
             if x != xcord and value in self.domains[ycord][x]:
-                if len(self.domains[ycord][x]) > 1:
+                if len(self.domains[ycord][x]) == 1 and self.board[ycord][x] == " ":
+                    self.update_mrv_value(ycord, x, len(self.domains[ycord][x]))
+                elif len(self.domains[ycord][x]) > 1:
                     self.domains[ycord][x].remove(value)
                     if self.board[ycord][x] == " ":
                         self.update_mrv_value(ycord, x, len(self.domains[ycord][x]))
@@ -214,7 +216,9 @@ class Search:
         # reduce domain of cells in the same column
         for y in range(self.size):
             if y != ycord and value in self.domains[y][xcord]:
-                if len(self.domains[y][xcord]) > 1:
+                if len(self.domains[y][xcord]) == 1 and self.board[y][xcord] == " ":
+                    self.update_mrv_value(y, xcord, len(self.domains[y][xcord]))
+                elif len(self.domains[y][xcord]) > 1:
                     self.domains[y][xcord].remove(value)
                     if self.board[y][xcord] == " ":
                         self.update_mrv_value(y, xcord, len(self.domains[y][xcord]))
@@ -226,7 +230,9 @@ class Search:
         for x in range(block_y, block_y + self.block_size):
             for y in range(block_x, block_x + self.block_size):
                 if y != xcord and x != ycord and value in self.domains[x][y]:
-                    if len(self.domains[x][y]) > 1:
+                    if len(self.domains[x][y]) == 1 and self.board[x][y] == " ":
+                        self.update_mrv_value(x, y, len(self.domains[x][y]))
+                    elif len(self.domains[x][y]) > 1:
                         self.domains[x][y].remove(value)
                         if self.board[x][y] == " ":
                             self.update_mrv_value(x, y, len(self.domains[x][y]))

@@ -211,9 +211,8 @@ class Search:
         # reduce domain of cells in the same row
         for x in range(self.size):
             if x != xcord and value in self.domains[ycord][x]:
-                if len(self.domains[ycord][x]) == 1 and self.board[ycord][x] == " ":
                     self.update_mrv_value(ycord, x, len(self.domains[ycord][x]))
-                elif len(self.domains[ycord][x]) > 1:
+                if len(self.domains[ycord][x]) > 1:
                     self.domains[ycord][x].remove(value)
                     if self.board[ycord][x] == " ":
                         self.update_mrv_value(ycord, x, len(self.domains[ycord][x]))
@@ -223,9 +222,8 @@ class Search:
         # reduce domain of cells in the same column
         for y in range(self.size):
             if y != ycord and value in self.domains[y][xcord]:
-                if len(self.domains[y][xcord]) == 1 and self.board[y][xcord] == " ":
-                    self.update_mrv_value(y, xcord, len(self.domains[y][xcord]))
-                elif len(self.domains[y][xcord]) > 1:
+               
+                if len(self.domains[y][xcord]) > 1:
                     self.domains[y][xcord].remove(value)
                     if self.board[y][xcord] == " ":
                         self.update_mrv_value(y, xcord, len(self.domains[y][xcord]))
@@ -237,9 +235,7 @@ class Search:
         for x in range(block_y, block_y + self.block_size):
             for y in range(block_x, block_x + self.block_size):
                 if y != xcord and x != ycord and value in self.domains[x][y]:
-                    if len(self.domains[x][y]) == 1 and self.board[x][y] == " ":
-                        self.update_mrv_value(x, y, len(self.domains[x][y]))
-                    elif len(self.domains[x][y]) > 1:
+                    if len(self.domains[x][y]) > 1:
                         self.domains[x][y].remove(value)
                         if self.board[x][y] == " ":
                             self.update_mrv_value(x, y, len(self.domains[x][y]))
@@ -248,16 +244,11 @@ class Search:
         return flag
     
 
-# ------ BACKTRACKING MRV (BRUTE)
+# ------ BACKTRACKING MRV
                              
-    def backtracking_brute_search_mrv(self, expansions = 0):
+    def backtracking_search_mrv(self, expansions = 0):
 
         if not self.mrv_queue:
-            # Some values never clash with other so they don't make the mrv queue so we fill in the rest
-            #for y in range(self.size):
-            #    for x in range(self.size):
-            #        if self.board[y][x] == " ":
-            #            self.board[y][x] = self.domains[y][x][0]
             return True, expansions
         
         mrv_value, y, x = heapq.heappop(self.mrv_queue)
@@ -269,10 +260,13 @@ class Search:
                 expansions += 1
                 self.board[y][x] = num
                 temp = deepcopy(self.domains)
+                temp_mrv = deepcopy(self.mrv_queue)
                 forward_check = self.reduce_domains_value_mrv(num, y, x)
-                success, expansions = self.backtracking_brute_search_mrv(expansions)
+                success, expansions = self.backtracking_search_mrv(expansions)
                 if success:
                     return True, expansions
+                
+                self.mrv_queue = temp_mrv
                 self.domains = temp
                 self.board[y][x] = " "
         return False, expansions
@@ -286,14 +280,8 @@ class Search:
     def backtracking_forward_check_search_mrv(self, expansions = 0):
 
         if not self.mrv_queue:
-            # Some values never clash with other so they don't make the mrv queue so we fill in the rest
-            for y in range(self.size):
-                for x in range(self.size):
-                    if self.board[y][x] == " ":
-                        self.board[y][x] = self.domains[y][x][0]
             return True, expansions
 
-    
         mrv_value, y, x = heapq.heappop(self.mrv_queue)
 
         domain_list = deepcopy(self.domains[y][x])
@@ -302,13 +290,114 @@ class Search:
             expansions += 1
             self.board[y][x] = num
             temp = deepcopy(self.domains)
+            temp_mrv = deepcopy(self.mrv_queue)
             forward_check = self.reduce_domains_value_mrv(num, y, x)
             if forward_check:
                 success, expansions = self.backtracking_forward_check_search_mrv(expansions)
                 if success:
                     return True, expansions
             self.domains = temp
+            self.mrv_queue = temp_mrv
             self.board[y][x] = " "
         return False, expansions
 
 
+
+
+
+
+
+
+# ------------- Degree Heuristic added on MRV
+
+
+    def get_degree(self, ycord, xcord):
+        degree = 0
+
+        for x in range(self.size):
+            if x == xcord:
+                continue                
+            if self.board[ycord][x] == " ":
+                degree += 1
+
+        for y in range(self.size):
+            if y == ycord:
+                continue
+            if self.board[y][xcord] == " ":
+                degree += 1
+
+        block_x = (xcord // self.block_size) * self.block_size
+        block_y = (ycord // self.block_size) * self.block_size
+        for x in range(block_y, block_y + self.block_size):
+            for y in range(block_x, block_x + self.block_size):         
+                if y != xcord and x != ycord and self.board[x][y] == " ":
+                    degree += 1
+
+        return degree
+
+
+    def get_next_box(self):
+        tuple_lis = []
+
+        mrv_value, y, x = heapq.heappop(self.mrv_queue)
+        value = (mrv_value, y, x)
+        tuple_lis.append(value)
+
+        while True:
+            next_mrv_value, y, x = heapq.heappop(self.mrv_queue)
+            value = (next_mrv_value, y, x)
+            tuple_lis.append(value)
+            if mrv_value != next_mrv_value:
+                break
+        
+        max_degree = 0
+        max_index = 0
+
+        for index, tup in enumerate(tuple_lis):
+            degree = self.get_degree(tup[1], tup[2])
+            if max_degree < degree:
+                max_degree = degree
+                max_index = index
+
+        degree_tuple = tuple_lis.pop(max_index)
+
+        for tup in tuple_lis:
+            heapq.heappush(self.mrv_queue, tup)
+
+        heapq.heapify(self.mrv_queue)
+
+        return degree_tuple
+
+
+
+
+# ------ BACKTRACKING MRV & DEGREE
+                             
+    def backtracking_search_mrv_deg(self, expansions = 0):
+
+        if not self.mrv_queue:
+            return True, expansions
+        
+        mrv_value, y, x = self.get_next_box()
+
+        domain_list = deepcopy(self.domains[y][x])
+
+        for num in domain_list:
+            if self.checkIfSafe(y, x, num):
+                expansions += 1
+                self.board[y][x] = num
+                temp = deepcopy(self.domains)
+                temp_mrv = deepcopy(self.mrv_queue)
+                forward_check = self.reduce_domains_value_mrv(num, y, x)
+                success, expansions = self.backtracking_search_mrv_deg(expansions)
+                if success:
+                    return True, expansions
+                self.domains = temp
+                self.mrv_queue = temp_mrv
+
+                self.board[y][x] = " "
+        return False, expansions
+            
+
+        
+        

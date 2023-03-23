@@ -46,11 +46,11 @@ class Environment:
         #return expansions, elapsed_time
         self.print_results(expansions, elapsed_time)
 
-    def backtracking_brute_mrv(self):
+    def backtracking_mrv(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()
         s.set_up_search_mrv()
-        success, expansions = s.backtracking_brute_search_mrv()
+        success, expansions = s.backtracking_search_mrv()
         elapsed_time = time.time() - start_time
         self.print_results(expansions, elapsed_time)
         #return expansions, elapsed_time
@@ -65,6 +65,16 @@ class Environment:
         #return expansions, elapsed_time
 
 
+    def backtracking_mrv_deg(self):
+        s = Search(self.size, self.current_state.board, self.current_state.domains)
+        start_time = time.time()
+        s.set_up_search_mrv()
+        success, expansions = s.backtracking_search_mrv_deg()
+        elapsed_time = time.time() - start_time
+        self.print_results(expansions, elapsed_time)
+        #return expansions, elapsed_time
+
+
 
 
 
@@ -72,11 +82,12 @@ class Environment:
 
 if __name__ == "__main__":
     
-    env = Environment(9, 32, 7)
+    env = Environment(16, 118, 7)
     env.current_state.get_board()
   
     print(env.current_state)
-    env.backtracking_brute_mrv()
+    env.backtracking_mrv()
+
     
 
 

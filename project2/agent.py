@@ -15,7 +15,7 @@ class Search:
         
 
 
-    # ------------- HELPER FUNCITONS
+    # ------------- HELPER FUNCTIONS
 
     # Helper function that is called in beginning of the search to set up domains and/or other values
 
@@ -312,7 +312,7 @@ class Search:
 
     def get_degree(self, ycord, xcord):
         degree = 0
-
+        
         for x in range(self.size):
             if x == xcord:
                 continue                
@@ -337,6 +337,8 @@ class Search:
 
     def get_next_box(self):
         tuple_lis = []
+
+        queue_backup = deepcopy(self.mrv_queue)
 
         mrv_value, y, x = heapq.heappop(self.mrv_queue)
         value = (mrv_value, y, x)
@@ -364,6 +366,8 @@ class Search:
             heapq.heappush(self.mrv_queue, tup)
 
         heapq.heapify(self.mrv_queue)
+
+        self.mrv_queue = queue_backup
 
         return degree_tuple
 

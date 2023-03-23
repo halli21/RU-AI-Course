@@ -85,9 +85,10 @@ class Search:
     
 
 
-# ------------- BACKTRACKING WITH FORWARD CHECK
+# ------------- USING DOMAINS
 
     def reduce_domains_value(self, value, ycord, xcord):
+        
         # reduce domain of cells in the same row
         for x in range(self.size):
             if x != xcord and value in self.domains[ycord][x]:
@@ -116,6 +117,33 @@ class Search:
         return True
     
 
+    def backtracking_search(self, i = 0, j = 0, expansions = 0):
+        expansions += 1
+
+        if i == self.size - 1 and j == self.size:
+            return True, expansions
+     
+        if j == self.size:
+            i += 1
+            j = 0
+     
+        if self.board[i][j] != " ":
+            return self.backtracking_search(i, j + 1, expansions)
+     
+        domain_list = deepcopy(self.domains[i][j])
+        for num in domain_list:
+            self.board[i][j] = num
+            temp = deepcopy(self.domains)
+
+            success, expansions = self.backtracking_search(i, j + 1, expansions)
+            if success:
+                return True, expansions
+            self.domains = temp
+            self.board[i][j] = " "
+
+        return False, expansions
+    
+
 
     def backtracking_forward_check_search(self, i = 0, j = 0, expansions = 0):
         expansions += 1
@@ -132,7 +160,6 @@ class Search:
      
         domain_list = deepcopy(self.domains[i][j])
         for num in domain_list:
-            #if self.checkIfSafe(i, j, num):
             self.board[i][j] = num
             temp = deepcopy(self.domains)
 
@@ -255,6 +282,7 @@ class Search:
                 success, expansions = self.backtracking_forward_check_search_mrv(expansions)
                 if success:
                     return True, expansions
+            print()
             self.domains = temp
             self.board[y][x] = " "
         return False, expansions

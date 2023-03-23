@@ -2,7 +2,7 @@ import random
 import math
 import time
 
-MAX_GEN_TIME = 2
+MAX_GEN_TIME = 5
  
 class Sudoku:
     def __init__(self, size, hints, seed=None):
@@ -37,11 +37,19 @@ class Sudoku:
         self.fillDiagonal()
  
         # Fill remaining blocks
+        
         while True:
             try:
                 self.fillRemaining(0, self.block_size)
             except TimeoutError:
                 break
+
+        
+
+        
+
+        #self.fillRemaining(0, self.block_size)
+            
  
         # Remove Randomly K digits to make game
         if self.check_valid():
@@ -109,10 +117,12 @@ class Sudoku:
 
     
     def fillRemaining(self, i, j):
-
+        
         elapsed_time = time.time() - self.start_time
         if elapsed_time > MAX_GEN_TIME - 0.01:
             raise TimeoutError("Sudoku generation timed out")
+
+        
 
 
         # Check if we have reached the end of the matrix

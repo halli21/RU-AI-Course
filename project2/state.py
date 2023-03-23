@@ -8,11 +8,11 @@ class State:
         self.block_size = int(math.sqrt(size)) 
         self.hints = hints
         self.domains = [[list(range(1, size + 1)) for _ in range(size)] for _ in range(size)]
-        self.board = None
+        self.board = [[" " for _ in range(self.size)] for _ in range(self.size)]
 
         self.seed = seed
         
-        self.get_board()
+        #self.get_board()
 
 
         

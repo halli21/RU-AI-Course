@@ -211,7 +211,6 @@ class Search:
         # reduce domain of cells in the same row
         for x in range(self.size):
             if x != xcord and value in self.domains[ycord][x]:
-                    self.update_mrv_value(ycord, x, len(self.domains[ycord][x]))
                 if len(self.domains[ycord][x]) > 1:
                     self.domains[ycord][x].remove(value)
                     if self.board[ycord][x] == " ":

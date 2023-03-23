@@ -9,6 +9,12 @@ HARD = 0.3    # 5, 25, 77
 DIFFICULTIES = [EASY, MEDIUM, HARD]
 DIFFICULTIES_STR = ["EASY", "MEDIUM", "HARD"]
 
+TESTS_4x4 = ["4x4_EASY.txt", "4x4_MEDIUM.txt", "4x4_HARD.txt"]
+TESTS_9x9 = ["9x9_EASY.txt", "9x9_MEDIUM.txt", "9x9_HARD.txt"]
+TESTS_16x16 = ["16x16_EASY.txt", "16x16_MEDIUM.txt", "16x16_HARD.txt"]
+
+
+
 def generate_boards():
     size = 16
 
@@ -38,16 +44,45 @@ def generate_boards():
         f.write(output)
     
     f.close()
+
+
+
+def get_boards(file_name, size):
+    boards_list = []
+
+    f = open(file_name)
+
+    for _ in range(100):
+        board = [[" " for _ in range(size)] for _ in range(size)]
+        line = f.readline()
+        values = line.split("-")
+        index = 0
+
+        for y in range(size):
+            for x in range(size):
+                board[y][x] = values[index]
+                index += 1
+        
+        boards_list.append(board)
+
+    f.close()
+
+    return boards_list
  
+
+
+
 
 
 
 # SOME SEEDS RESULT IN A FAILED GENERATION OF BOARD SO WE US WHILE LOOPS TO SKIP BAD SEEDS
 
-def test(size, search):
+def test(size, search, tests):
 
     if search == "backtracking_forward_check":
         print(f"\n\n----TESTING BACKTRACKING WITH FORWARD CHECK ALGORTIHM AT SIZE {size}----")
+    elif search == "backtracking": 
+        print(f"\n\n----TESTING BACKTRACKING ALGORTIHM AT SIZE {size}----")
     elif search == "backtracking_brute": 
         print(f"\n\n----TESTING BACKTRACKING BRUTE ALGORTIHM AT SIZE {size}----")
     elif search == "backtracking_brute_mrv":
@@ -63,27 +98,31 @@ def test(size, search):
         elapsed_time_sum = 0
         
         iterations = 0
-        seed = 1
+        
+        boards_list = get_boards(tests[count], size)
     
         while iterations < 100:
-            env = Environment(size, round((size * size) * level), seed)
-            if env.current_state.board != None:
-                if search == "backtracking_forward_check":
-                    expansions, elapsed_time = env.backtracking_forward_check()
-                elif search == "backtracking_brute": 
-                    expansions, elapsed_time = env.backtracking_brute()
-                elif search == "backtracking_brute_mrv":
-                    expansions, elapsed_time = env.backtracking_brute_mrv()
-                elif search == "backtracking_forward_check_mrv":
-                    expansions, elapsed_time = env.backtracking_forward_check_mrv
-                expansion_sum += expansions
-                expansion_ps_sum += expansions / (elapsed_time + 0.0001)
-                elapsed_time_sum += elapsed_time
-            else:
-                seed += 1
-                continue
+            env = Environment(size, round((size * size) * level))
+            env.current_state.board = boards_list[iterations]
+            env.current_state.update_domain()
+
             
-            seed += 1
+            if search == "backtracking_forward_check":
+                expansions, elapsed_time = env.backtracking_forward_check()
+            elif search == "backtracking": 
+                expansions, elapsed_time = env.backtracking()
+            elif search == "backtracking_brute": 
+                expansions, elapsed_time = env.backtracking_brute()
+            elif search == "backtracking_brute_mrv":
+                expansions, elapsed_time = env.backtracking_brute_mrv()
+            elif search == "backtracking_forward_check_mrv":
+                expansions, elapsed_time = env.backtracking_forward_check_mrv
+            expansion_sum += expansions
+            expansion_ps_sum += expansions / (elapsed_time + 0.000000000000000000000000001)
+            elapsed_time_sum += elapsed_time
+            
+            
+            
             iterations += 1
 
         print(f"\n\n--{iterations} TESTS AT DIFFICULTY LEVEL {DIFFICULTIES_STR[count]}--")
@@ -94,194 +133,10 @@ def test(size, search):
 
 
 
-def test_backtracking_brute(size):
-    print(f"\n\n----TESTING BACKTRACKING BRUTE ALGORTIHM AT SIZE {size}----")
-
-    for count, level in enumerate(DIFFICULTIES):
-        expansion_sum = 0
-        expansion_ps_sum = 0
-        elapsed_time_sum = 0
-        
-        iterations = 0
-        seed = 1
-    
-        while iterations < 100:
-            env = Environment(size, round((size * size) * level), seed)
-            if env.current_state.board != None:
-                expansions, elapsed_time = env.backtracking_brute()
-                expansion_sum += expansions
-                expansion_ps_sum += expansions / elapsed_time
-                elapsed_time_sum += elapsed_time
-            else:
-                seed += 1
-                continue
-
-            seed += 1
-            iterations += 1
-
-        print(f"\n\n--{iterations} TESTS AT DIFFICULT LEVEL {DIFFICULTIES_STR[count]}--")
-
-        print(f"Average total expansions: {expansion_sum / iterations}")
-        print(f"Average expansions per second: {expansion_ps_sum / iterations}")
-        print(f"Average search run-time: {elapsed_time_sum / iterations}")
-
-
-
-
-def test_backtracking(size):
-    print(f"\n\n----TESTING BACKTRACKING ALGORTIHM AT SIZE {size}----")
-
-    for count, level in enumerate(DIFFICULTIES):
-        expansion_sum = 0
-        expansion_ps_sum = 0
-        elapsed_time_sum = 0
-        
-        iterations = 0
-        seed = 1
-    
-        while iterations < 100:
-            env = Environment(size, round((size * size) * level), seed)
-            if env.current_state.board != None:
-                expansions, elapsed_time = env.backtracking()
-                expansion_sum += expansions
-                expansion_ps_sum += expansions / elapsed_time
-                elapsed_time_sum += elapsed_time
-            else:
-                seed += 1
-                continue
-
-            seed += 1
-            iterations += 1
-            print(f"Test {iterations} with seed {seed} complete")
-
-        print(f"\n\n--{iterations} TESTS AT DIFFICULT LEVEL {DIFFICULTIES_STR[count]}--")
-
-        print(f"Average total expansions: {expansion_sum / iterations}")
-        print(f"Average expansions per second: {expansion_ps_sum / iterations}")
-        print(f"Average search run-time: {elapsed_time_sum / iterations}")
-
-
-
-def test_backtracking_forward_check(size):
-    print(f"\n\n----TESTING BACKTRACKING WITH FORWARD CHECK ALGORTIHM AT SIZE {size}----")
-
-    for count, level in enumerate(DIFFICULTIES):
-        expansion_sum = 0
-        expansion_ps_sum = 0
-        elapsed_time_sum = 0
-        
-        iterations = 0
-        seed = 1
-    
-        while iterations < 100:
-            env = Environment(size, round((size * size) * level), seed)
-            if env.current_state.board != None:
-                expansions, elapsed_time = env.backtracking_forward_check()
-                expansion_sum += expansions
-                expansion_ps_sum += expansions / elapsed_time
-                elapsed_time_sum += elapsed_time
-            else:
-                seed += 1
-                continue
-            
-            seed += 1
-            iterations += 1
-
-        print(f"\n\n--{iterations} TESTS AT DIFFICULT LEVEL {DIFFICULTIES_STR[count]}--")
-
-        print(f"Average total expansions: {expansion_sum / iterations}")
-        print(f"Average expansions per second: {expansion_ps_sum / iterations}")
-        print(f"Average search run-time: {elapsed_time_sum / iterations}")
-
-
-
-
-def test_backtracking_brute_mrv(size):
-    print(f"\n\n----TESTING BACKTRACKING WITH MRV HEURISTIC ALGORTIHM AT SIZE {size}----")
-
-    for count, level in enumerate(DIFFICULTIES):
-        expansion_sum = 0
-        expansion_ps_sum = 0
-        elapsed_time_sum = 0
-        
-        iterations = 0
-        seed = 1
-    
-        while iterations < 100:
-            env = Environment(size, round((size * size) * level), seed)
-            if env.current_state.board != None:
-                expansions, elapsed_time = env.backtracking_brute_mrv()
-                expansion_sum += expansions
-                expansion_ps_sum += expansions / elapsed_time
-                elapsed_time_sum += elapsed_time
-            else:
-                seed += 1
-                continue
-
-            print(f"Test {iterations} with seed {seed} complete")
-            seed += 1
-            iterations += 1
-       
-
-        print(f"\n\n--{iterations} TESTS AT DIFFICULT LEVEL {DIFFICULTIES_STR[count]}--")
-
-        print(f"Average total expansions: {expansion_sum / iterations}")
-        print(f"Average expansions per second: {expansion_ps_sum / iterations}")
-        print(f"Average search run-time: {elapsed_time_sum / iterations}")
-
-
-
-def test_backtracking_forward_check_mrv(size):
-    print(f"\n\n----TESTING BACKTRACKING WITH FORWARD CHECK AND MRV HEURISTIC ALGORTIHM AT SIZE {size}----")
-
-    for count, level in enumerate(DIFFICULTIES):
-        expansion_sum = 0
-        expansion_ps_sum = 0
-        elapsed_time_sum = 0
-        
-        iterations = 0
-        seed = 1
-    
-        while iterations < 10:
-            env = Environment(size, round((size * size) * level), seed)
-            if env.current_state.board != None:
-                expansions, elapsed_time = env.backtracking_forward_check_mrv()
-                expansion_sum += expansions
-                expansion_ps_sum += expansions / elapsed_time
-                elapsed_time_sum += elapsed_time
-            else:
-                seed += 1
-                continue
-
-            print(f"Test {iterations} with seed {seed} complete")
-            seed += 1
-            iterations += 1
-
-        print(f"\n\n--{iterations} TESTS AT DIFFICULT LEVEL {DIFFICULTIES_STR[count]}--")
-
-        print(f"Average total expansions: {expansion_sum / iterations}")
-        print(f"Average expansions per second: {expansion_ps_sum / iterations}")
-        print(f"Average search run-time: {elapsed_time_sum / iterations}")
-
-
-
 
 if __name__ == "__main__":
-    generate_boards()
+    test(9, "backtracking", TESTS_9x9)
     #f = open("16x16_MEDIUM.txt", "r")
     
-    """
-    for _ in range(100):
-        line = f.readline()
-        pooop = line.split("-")
-        count = 0
-        for lol in pooop:
-            if lol != " ":
-                count += 1
-        
-        print(count)
-
-    """
-
 
    

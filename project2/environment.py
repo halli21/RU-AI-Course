@@ -25,8 +25,8 @@ class Environment:
         start_time = time.time()
         success, expansions = s.backtracking_brute_search()
         elapsed_time = time.time() - start_time
-        return expansions, elapsed_time
-        #self.print_results(expansions, elapsed_time)
+        #return expansions, elapsed_time
+        self.print_results(expansions, elapsed_time)
 
     def backtracking(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
@@ -34,8 +34,8 @@ class Environment:
         s.set_up_search()
         success, expansions = s.backtracking_search()
         elapsed_time = time.time() - start_time
-        return expansions, elapsed_time
-        #self.print_results(expansions, elapsed_time)
+        #return expansions, elapsed_time
+        self.print_results(expansions, elapsed_time)
 
     def backtracking_forward_check(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
@@ -52,8 +52,8 @@ class Environment:
         s.set_up_search_mrv()
         success, expansions = s.backtracking_brute_search_mrv()
         elapsed_time = time.time() - start_time
-        #self.print_results(expansions, elapsed_time)
-        return expansions, elapsed_time
+        self.print_results(expansions, elapsed_time)
+        #return expansions, elapsed_time
 
     def backtracking_forward_check_mrv(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
@@ -72,10 +72,11 @@ class Environment:
 
 if __name__ == "__main__":
     
-    env = Environment(4, 7, 1)
+    env = Environment(9, 32, 7)
+    env.current_state.get_board()
   
     print(env.current_state)
-   
+    env.backtracking_brute_mrv()
     
 
 

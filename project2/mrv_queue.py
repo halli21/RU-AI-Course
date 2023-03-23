@@ -4,7 +4,7 @@ class MRV_Node:
     def __init__(self, value, ycord, xcord, next = None):
         self.value = value
         self.ycord = ycord
-        self.xord = xcord
+        self.xcord = xcord
         self.next = next
 
 class MRV_Queue:
@@ -35,8 +35,28 @@ class MRV_Queue:
     def pop(self):
         ret = self.head
         self.head = self.head.next
+        self.size -= 1
 
         return ret
+    
+
+    def update_node(self, y, x, new_val):
+        current = self.head
+        if current.ycord == y and current.xcord == x:
+            self.head = self.head.next
+            self.size -= 1
+        else:
+            while current.next != None:
+                if current.next.ycord == y and current.next.xcord == x:
+                    current.next = current.next.next
+                    self.size -= 1
+                    break
+                current = current.next
+
+        
+        new_node = MRV_Node(new_val, y, x)
+        self.insert(new_node)
+
     
     
 
@@ -52,4 +72,6 @@ if __name__ == "__main__":
     q.insert(node2)
     q.insert(node3)
     q.insert(node4)
+
+    q.update_node(3, 2, 5)
     print()

@@ -1,7 +1,6 @@
 import math
-import heapq
 
-from mrv_queue import MRV_Queue, MRV_Node
+from mrv_queue import MRV_Queue
 from copy import deepcopy
 
 
@@ -340,12 +339,11 @@ class Search:
     def get_next_box(self):
         node_lis = []
 
-        mrv_value, y, x = self.mrv_queue.pop()
-        node = MRV_Node(mrv_value, y, x)
+        node = self.mrv_queue.pop()
         node_lis.append(node)
 
-        while True:
-            next_node = heapq.heappop(self.mrv_queue)
+        while self.mrv_queue.size != 0:
+            next_node = self.mrv_queue.pop()
             node_lis.append(next_node)
             if node.value != next_node.value:
                 break
@@ -359,14 +357,10 @@ class Search:
                 max_degree = degree
                 max_index = index
 
-        degree_tuple = node_lis.pop(max_index)
-
         for node in node_lis:
-            heapq.heappush(self.mrv_queue, node)
+            self.mrv_queue.insert(node)
 
-        heapq.heapify(self.mrv_queue)
-
-       
+        degree_tuple = node_lis.pop(max_index)
 
         return degree_tuple
 
@@ -377,27 +371,27 @@ class Search:
                              
     def backtracking_search_mrv_deg(self, expansions = 0):
 
-        if not self.mrv_queue:
+        if self.mrv_queue.size == 0:
             return True, expansions
         
-        mrv_value, y, x = self.get_next_box()
+        node = self.get_next_box()
 
-        domain_list = deepcopy(self.domains[y][x])
+        domain_list = deepcopy(self.domains[node.ycord][node.xcord])
 
         for num in domain_list:
-            if self.checkIfSafe(y, x, num):
+            if self.checkIfSafe(node.ycord, node.xcord, num):
                 expansions += 1
-                self.board[y][x] = num
+                self.board[node.ycord][node.xcord] = num
                 temp = deepcopy(self.domains)
                 temp_mrv = deepcopy(self.mrv_queue)
-                forward_check = self.reduce_domains_value_mrv(num, y, x)
+                forward_check = self.reduce_domains_value_mrv(num, node.ycord, node.xcord)
                 success, expansions = self.backtracking_search_mrv_deg(expansions)
                 if success:
                     return True, expansions
                 self.domains = temp
                 self.mrv_queue = temp_mrv
 
-                self.board[y][x] = " "
+                self.board[node.ycord][node.xcord] = " "
         return False, expansions
             
 

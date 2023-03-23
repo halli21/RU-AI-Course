@@ -82,11 +82,11 @@ class Environment:
 
 if __name__ == "__main__":
     
-    env = Environment(16, 118, 7)
+    env = Environment(9, 32, 7)
     env.current_state.get_board()
   
     print(env.current_state)
-    env.backtracking_forward_check_mrv()
+    env.backtracking_mrv_deg()
 
     
 

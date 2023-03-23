@@ -353,7 +353,7 @@ class Search:
 
         for index, node in enumerate(node_lis):
             degree = self.get_degree(node.ycord, node.xcord)
-            if max_degree < degree:
+            if max_degree < degree: #and node.valid
                 max_degree = degree
                 max_index = index
 
@@ -378,8 +378,10 @@ class Search:
 
         domain_list = deepcopy(self.domains[node.ycord][node.xcord])
 
+        valid = deepcopy(self.mrv_queue)
+
         for num in domain_list:
-            if self.checkIfSafe(node.ycord, node.xcord, num):
+            if self.checkIfSafe(node.ycord, node.xcord, num) and valid.includes(node.ycord, node.xcord):
                 expansions += 1
                 self.board[node.ycord][node.xcord] = num
                 temp = deepcopy(self.domains)
@@ -387,11 +389,14 @@ class Search:
                 forward_check = self.reduce_domains_value_mrv(num, node.ycord, node.xcord)
                 success, expansions = self.backtracking_search_mrv_deg(expansions)
                 if success:
+                    #self.mrv_queue.all_valid()
                     return True, expansions
                 self.domains = temp
                 self.mrv_queue = temp_mrv
+                valid.remove(node.ycord, node.xcord)
 
                 self.board[node.ycord][node.xcord] = " "
+        #node.valid = False
         return False, expansions
             
 

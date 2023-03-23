@@ -6,12 +6,15 @@ class MRV_Node:
         self.ycord = ycord
         self.xcord = xcord
         self.next = next
+        #self.valid = True
+
 
 class MRV_Queue:
     def __init__(self):
         self.head = None
         self.tail = None
         self.size = 0
+        self.used = None
 
     def insert(self, node):
         if self.head == None:
@@ -41,6 +44,20 @@ class MRV_Queue:
     
 
     def update_node(self, y, x, new_val):
+        self.remove(y, x)
+
+        new_node = MRV_Node(new_val, y, x)
+        self.insert(new_node)
+
+    
+    def all_valid(self):
+        current = self.head
+        while current != None:
+            current.valid = True
+            current = current.next
+
+    
+    def remove(self, y, x):
         if self.head != None:
             current = self.head
             if current.ycord == y and current.xcord == x:
@@ -54,9 +71,16 @@ class MRV_Queue:
                         break
                     current = current.next
 
-        
-        new_node = MRV_Node(new_val, y, x)
-        self.insert(new_node)
+    
+    def includes(self, y, x):
+        if self.head != None:
+            current = self.head
+            while current != None:
+                if current.ycord == y and current.xcord == x:
+                    return True
+                current = current.next
+
+        return False
 
     
     

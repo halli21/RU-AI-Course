@@ -13,7 +13,11 @@ def main():
 
 
 def size_menu():
-    os.system('cls')
+    if platform.system() == "Windows":
+        os.system("cls")
+    else:
+        os.system("clear")
+        print()
     sizes = [0, 4, 9, 16]
     choice = int
     print("\n----Choose the size of the Sudoku----\n1) 4x4\n2) 9x9\n3) 16x16\n0) Quit")
@@ -28,7 +32,11 @@ def size_menu():
 
 
 def dif_menu():
-    os.system('cls')
+    if platform.system() == "Windows":
+        os.system("cls")
+    else:
+        os.system("clear")
+        print()
     difficulties = [0, "Easy", "Medium", "Hard"]
     print("\n----Choose a difficulty----\n1) Easy\n2) Medium\n3) Hard\n0) Go back")
     choice = input("Enter option: ")
@@ -41,7 +49,11 @@ def dif_menu():
         return
 
 def alg_menu():
-    os.system('cls')
+    if platform.system() == "Windows":
+        os.system("cls")
+    else:
+        os.system("clear")
+        print()
     algorithms = [0, "BacktrackBF", "Backtrack", "FwdCheck"]
     print("\n----Choose an algortihm----\n1) Backtracking (Brute force)\n2) Backtracking\n3) Backtracking with forward checking\n0) Go back")
     choice = input("Enter option: ")
@@ -55,11 +67,15 @@ def alg_menu():
 
 
 def heu_menu(alg_choice):
-    os.system('cls')
+    if platform.system() == "Windows":
+        os.system("cls")
+    else:
+        os.system("clear")
+        print()
     if alg_choice == "Backtrack":
         heuristics = [0, "MRV", "MRVDegree", "None"]
         print("\n----Choose a heuristic----\n1) MRV\n2) MRV with degree\n3) None\n0) Go back")
-    elif alg_choice == "FWDCheck":
+    elif alg_choice == "FwdCheck":
         heuristics = [0, "MRV", "None"]
         print("\n----Choose a heuristic----\n1) MRV\n2) None\n0) Go back")
     
@@ -115,7 +131,11 @@ if __name__ == "__main__":
         env = Environment(size, dif_choose[difficulty][indexes[size]])
         env.current_state.get_board()
 
-        os.system('cls')
+        if platform.system() == "Windows":
+            os.system("cls")
+        else:
+            os.system("clear")
+            print()
         print(env.current_state)
         print()
 

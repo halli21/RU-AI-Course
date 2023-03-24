@@ -102,7 +102,7 @@ class Search:
         # reduce domain of cells in the same row
         for x in range(self.size):
             if x != xcord and value in self.domains[ycord][x]:
-                if len(self.domains[ycord][x]) > 1:
+                if len(self.domains[ycord][x]) != 1:
                     self.domains[ycord][x].remove(value) 
                 else:
                     flag = False
@@ -110,7 +110,7 @@ class Search:
         # reduce domain of cells in the same column
         for y in range(self.size):
             if y != ycord and value in self.domains[y][xcord]:
-                if len(self.domains[y][xcord]) > 1:
+                if len(self.domains[y][xcord]) != 1:
                     self.domains[y][xcord].remove(value)
                 else:
                     flag = False
@@ -119,11 +119,12 @@ class Search:
         block_y = (ycord // self.block_size) * self.block_size
         for x in range(block_y, block_y + self.block_size):
             for y in range(block_x, block_x + self.block_size):
-                if y != xcord and x != ycord and value in self.domains[x][y]:
-                    if len(self.domains[x][y]) > 1:
-                        self.domains[x][y].remove(value)
-                    else:
-                        flag = False
+                if y != xcord or x != ycord:
+                    if value in self.domains[x][y]:
+                        if len(self.domains[x][y]) != 1:
+                            self.domains[x][y].remove(value)
+                        else:
+                            flag = False
         return flag
     
 
@@ -196,27 +197,6 @@ class Search:
 
 
 # ------------- MRV Heuristic implemented
-
-    """
-    def update_mrv_value(self, old_y, old_x, new_mrv_value):
-        node = MRV_Node(new_mrv_value, old_y, old_x)
-        new_queue = []
-        updated = False
-
-        while len(self.mrv_queue) > 0:
-            item = heapq.heappop(self.mrv_queue)
-            if item[1] == old_y and item[2] == old_x:
-                heapq.heappush(new_queue, node)
-                updated = True
-            else:
-                heapq.heappush(new_queue, item)
-
-        if not updated:
-            heapq.heappush(new_queue, node)
-
-        self.mrv_queue = new_queue
-        heapq.heapify(self.mrv_queue)
-    """
 
 
     def reduce_domains_value_mrv(self, value, ycord, xcord):
@@ -339,14 +319,15 @@ class Search:
         block_y = (ycord // self.block_size) * self.block_size
         for x in range(block_y, block_y + self.block_size):
             for y in range(block_x, block_x + self.block_size):         
-                if y != xcord and x != ycord and self.board[x][y] == " ":
-                    degree += 1
+                if y != xcord or x != ycord:
+                    if self.board[x][y] == " ":
+                        degree += 1
 
         return degree
 
 
 
-    def get_next_box(self):
+    def get_next_square(self):
         node_lis = []
 
         node = self.mrv_queue.pop()
@@ -358,6 +339,12 @@ class Search:
             if node.value != next_node.value:
                 break
                     
+       
+        if len(node_lis) > 1:
+            # gets and removes the last value in lists
+            last_node = node_lis.pop() # the last value will not have the lowest mrv value so we remove it
+            self.mrv_queue.insert(last_node)
+
         max_degree = 0
         max_index = 0
 
@@ -367,10 +354,10 @@ class Search:
                 max_degree = degree
                 max_index = index
 
+        degree_tuple = node_lis.pop(max_index)
+
         for node in node_lis:
             self.mrv_queue.insert(node)
-
-        degree_tuple = node_lis.pop(max_index)
 
         return degree_tuple
 
@@ -384,14 +371,14 @@ class Search:
         if self.mrv_queue.size == 0:
             return True, expansions
         
-        node = self.get_next_box()
+        node = self.get_next_square()
 
         domain_list = deepcopy(self.domains[node.ycord][node.xcord])
 
         valid = deepcopy(self.mrv_queue)
 
         for num in domain_list:
-            if self.checkIfSafe(node.ycord, node.xcord, num) and valid.includes(node.ycord, node.xcord):
+            if self.checkIfSafe(node.ycord, node.xcord, num):
                 expansions += 1
                 self.board[node.ycord][node.xcord] = num
                 temp = deepcopy(self.domains)

@@ -365,8 +365,7 @@ class Search:
 
         domain_list = deepcopy(self.domains[node.ycord][node.xcord])
 
-        valid = deepcopy(self.mrv_queue)
-
+    
         for num in domain_list:
             if self.checkIfSafe(node.ycord, node.xcord, num):
                 expansions += 1
@@ -376,14 +375,12 @@ class Search:
                 forward_check = self.reduce_domains_value_mrv(num, node.ycord, node.xcord)
                 success, expansions = self.backtracking_search_mrv_deg(expansions)
                 if success:
-                    #self.mrv_queue.all_valid()
                     return True, expansions
                 self.domains = temp
                 self.mrv_queue = temp_mrv
-                valid.remove(node.ycord, node.xcord)
-
+            
                 self.board[node.ycord][node.xcord] = " "
-        #node.valid = False
+        
         return False, expansions
             
 

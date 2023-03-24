@@ -116,9 +116,14 @@ def test(size, search, tests):
             elif search == "backtracking_brute_mrv":
                 expansions, elapsed_time = env.backtracking_brute_mrv()
             elif search == "backtracking_forward_check_mrv":
-                expansions, elapsed_time = env.backtracking_forward_check_mrv
+                expansions, elapsed_time = env.backtracking_forward_check_mrv()
+            elif search == "backtracking_random":
+                expansions, elapsed_time = env.backtracking_random()
             expansion_sum += expansions
-            expansion_ps_sum += expansions / elapsed_time
+            try:
+                expansion_ps_sum += expansions / elapsed_time
+            except ZeroDivisionError:
+                pass
             elapsed_time_sum += elapsed_time
             
             

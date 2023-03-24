@@ -2,6 +2,7 @@ import math
 
 from mrv_queue import MRV_Queue
 from copy import deepcopy
+import random
 
 
 
@@ -12,6 +13,7 @@ class Search:
         self.board = board
         self.domains = domains
         self.mrv_queue = MRV_Queue()
+        self.rand_queue = {4: [], 9: [], 16: []}
         
 
 
@@ -20,16 +22,24 @@ class Search:
     # Helper function that is called in beginning of the search to set up domains and/or other values
 
     def set_up_search(self):
-        for x in range(self.size):
-            for y in range(self.size):
-                if self.board[x][y] != " ":
-                    reduced = self.reduce_domains_value(int(self.board[x][y]), x, y)
+        for y in range(self.size):
+            for x in range(self.size):
+                if self.board[y][x] != " ":
+                    reduced = self.reduce_domains_value(int(self.board[y][x]), y, x)
     
     def set_up_search_mrv(self):
-        for x in range(self.size):
-            for y in range(self.size):
-                if self.board[x][y] != " ":
-                    reduced = self.reduce_domains_value_mrv(int(self.board[x][y]), x, y)
+        for y in range(self.size):
+            for x in range(self.size):
+                if self.board[y][x] != " ":
+                    reduced = self.reduce_domains_value_mrv(int(self.board[y][x]), y, x)
+
+    def set_up_search_rand(self):
+        for y in range(self.size):
+            for x in range(self.size):
+                if self.board[y][x] == " ":
+                    tup = (x, y)
+                    self.rand_queue[self.size].append(tup)
+        
                 
         
 
@@ -402,3 +412,34 @@ class Search:
 
         
         
+# ------ BACKTRACKING RANDOM
+
+    def backtracking_random(self, expansions = 0):
+        x = 0
+        y = 1
+
+        if len(self.rand_queue[self.size]) == 0:
+            self.set_up_search_rand()
+            if len(self.rand_queue[self.size]) == 0:
+                return True, expansions
+        
+
+        length = len(self.rand_queue[self.size])
+        rand_num = random.randrange(0, length)
+        tup = self.rand_queue[self.size].pop(rand_num)
+
+        domain_list = deepcopy(self.domains[tup[y]][tup[x]])
+
+        for num in domain_list:
+            if self.checkIfSafe(tup[y], tup[x], num):
+                expansions += 1
+                self.board[tup[y]][tup[x]] = num
+                temp = deepcopy(self.domains)
+                forward_check = self.reduce_domains_value(num, tup[y], tup[x])
+                success, expansions = self.backtracking_random(expansions)
+                if success:
+                    return True, expansions
+                
+                self.domains = temp
+                self.board[tup[y]][tup[x]] = " "
+        return False, expansions

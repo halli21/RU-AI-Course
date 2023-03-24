@@ -116,7 +116,9 @@ def test(size, search, tests):
             elif search == "backtracking_brute_mrv":
                 expansions, elapsed_time = env.backtracking_brute_mrv()
             elif search == "backtracking_forward_check_mrv":
-                expansions, elapsed_time = env.backtracking_forward_check_mrv
+                expansions, elapsed_time = env.backtracking_forward_check_mrv()
+            elif search == "backtracking_random":
+                expansions, elapsed_time = env.backtracking_random()
             expansion_sum += expansions
             expansion_ps_sum += expansions / (elapsed_time + 0.000000000000000000000000001)
             elapsed_time_sum += elapsed_time
@@ -135,7 +137,7 @@ def test(size, search, tests):
 
 
 if __name__ == "__main__":
-    test(9, "backtracking", TESTS_9x9)
+    test(9, "backtracking_random", TESTS_4x4)
     #f = open("16x16_MEDIUM.txt", "r")
     
 

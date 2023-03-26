@@ -142,9 +142,9 @@ def test(size, search, tests):
 
 
 if __name__ == "__main__":
-    test(9, "backtracking_random", TESTS_9x9)
-    #f = open("16x16_MEDIUM.txt", "r")
-
+    test(4, "backtracking", TESTS_4x4)
+    #test(9, "backtracking", TESTS_9x9)
+   
     """
     backtracking_brute
 

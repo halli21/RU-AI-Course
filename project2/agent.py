@@ -410,7 +410,7 @@ class Search:
 
         for index, node in enumerate(node_lis):
             degree = self.get_degree(node.ycord, node.xcord)
-            if max_degree < degree: #and node.valid
+            if max_degree < degree: 
                 max_degree = degree
                 max_index = index
 
@@ -437,8 +437,6 @@ class Search:
         #Take a copy of the domains list for this cell so it doesnt change in the middle of the for loop
         domain_list = deepcopy(self.domains[node.ycord][node.xcord])
 
-        #Take a copy of the mrv queue and use it to 
-        valid = deepcopy(self.mrv_queue)
 
         #Go through all the numbers in the doamin for this cell.
         for num in domain_list:
@@ -456,11 +454,10 @@ class Search:
                 if success:
                     return True, expansions
                 
-                # if backtracked we empty the cell, fix domains, fix the queue and remove this node from the valid list so it is not checked again
+                # if backtracked we empty the cell, fix domains, fix the queue
                 self.domains = temp
                 self.mrv_queue = temp_mrv
-                valid.remove(node.ycord, node.xcord)
-
+            
                 self.board[node.ycord][node.xcord] = " "
         #if no possible number is safe then we return False, a.k.a. we backtrack
         return False, expansions

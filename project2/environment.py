@@ -94,7 +94,14 @@ if __name__ == "__main__":
     env.current_state.get_board()
   
     print(env.current_state)
-    env.backtracking_random()
+    env.backtracking_mrv_deg()
+
+    env2 = Environment(16, 118, 1)
+    env2.current_state.get_board()
+  
+
+    env2.backtracking_mrv()
+
 
     
 

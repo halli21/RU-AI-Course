@@ -15,14 +15,9 @@ class State:
         #self.get_board()
 
 
-        
-
     
     def get_board(self):
-        # The code we borrowed to generate boards doesn´t always find a solution if it messes  
-        # up when putting in the diagonal blocks, this will ensure we always get a board.
-
-
+        
         generator = Sudoku(self.size, self.hints, self.seed)
 
         # FOR TESTING WITH SEEDS TO SEND BACK BOARD AS NONE IF SEED FAILS
@@ -37,6 +32,9 @@ class State:
             return
         
         # ELSE JUST RUN UNTIL WE GENERATE A VALID BOARD
+
+        # The code we borrowed to generate boards doesn´t always find a solution if it messes  
+        # up when putting in the diagonal blocks, this will ensure we always get a board.
             
         complete = False
 

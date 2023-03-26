@@ -138,7 +138,7 @@ if __name__ == "__main__":
     env.current_state.get_board()
   
     print(env.current_state)
-    env.backtracking_forward_check_mrv_deg()
+    env.backtracking_mrv_deg()
 
 
 

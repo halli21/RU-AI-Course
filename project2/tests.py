@@ -165,9 +165,9 @@ def test(size, search, tests):
 
 
 if __name__ == "__main__":
-    #test(4, "backtracking_forward_check_mrv_deg", TESTS_4x4)
+    test(4, "backtracking_forward_check_mrv_deg", TESTS_4x4)
     #test(9, "backtracking_forward_check_mrv_deg", TESTS_9x9)
-    test(16, "backtracking_random", TESTS_16x16)
+    #test(16, "backtracking_mrv", TESTS_16x16)
    
     """
     backtracking_brute

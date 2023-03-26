@@ -16,7 +16,7 @@ class Search:
         self.mrv_queue = MRV_Queue()
         self.rand_queue = {4: [], 9: [], 16: []}
 
-        # For testing
+        # For testing purposes, cuts off algorithm after 30 seconds
         self.start_time = None
 
         
@@ -281,42 +281,33 @@ class Search:
                     flag = False
         
         # reduce domains of cells in the same square
-        block_x = (xcord // self.block_size) * self.block_size
         block_y = (ycord // self.block_size) * self.block_size
-        for x in range(block_y, block_y + self.block_size):
-            for y in range(block_x, block_x + self.block_size):
-                if y != xcord or x != ycord:
-                    if value in self.domains[x][y]:
-                        if len(self.domains[x][y]) != 1:
-                            self.domains[x][y].remove(value)
-                            if self.board[x][y] == " ":
-                                self.mrv_queue.update_node(x, y, len(self.domains[x][y]))
-                        else:
-                            flag = False
+        block_x = (xcord // self.block_size) * self.block_size
 
         for y in range(block_y, block_y + self.block_size):
             for x in range(block_x, block_x + self.block_size):
-                if x != xcord and y != ycord and value in self.domains[y][x]:
-                    if len(self.domains[y][x]) > 1:
-                        self.domains[y][x].remove(value)
-                        if self.board[y][x] == " ":
-                            self.mrv_queue.update_node(y, x, len(self.domains[y][x]))
-                    else:
-                        flag = False
+                if x != xcord and y != ycord:
+                    if value in self.domains[y][x]:
+                        if len(self.domains[y][x]) != 1:
+                            self.domains[y][x].remove(value)
+                            if self.board[y][x] == " ":
+                                self.mrv_queue.update_node(y, x, len(self.domains[y][x]))
+                        else:
+                            flag = False
         #the flag is true if everything went well, but returns false if there is some domain that will become empty if the value is removed
         return flag
     
 
 # ------ BACKTRACKING MRV
                              
+    #Instead of going linearly through the sudoku, this uses an mrv_queue to pick which cell to fill next 
     def backtracking_search_mrv(self, expansions = 0):
+
         elapsed_time = time.time() - self.start_time
 
         if elapsed_time > 29.999999:
             return True, expansions
-
-    #Instead of going linearly through the sudoku, this uses an mrv_queue to pick which cell to fill next 
-    def backtracking_search_mrv(self, expansions = 0):
+        
         #if mrv queue is empty then the sudoku is finsished
         if self.mrv_queue.size == 0:
             return True, expansions
@@ -491,7 +482,7 @@ class Search:
         domain_list = deepcopy(self.domains[node.ycord][node.xcord])
 
 
-        #Go through all the numbers in the doamin for this cell.
+        #Go through all the numbers in the domain for this cell.
         for num in domain_list:
             if self.checkIfSafe(node.ycord, node.xcord, num):
                 expansions += 1
@@ -518,41 +509,50 @@ class Search:
 
 
 
-
+# ------ BACKTRACKING WITH FORWARD CHECK MRV & DEGREE
 
 
     def backtracking_forward_check_search_mrv_deg(self, expansions = 0):
 
-            elapsed_time = time.time() - self.start_time
+        elapsed_time = time.time() - self.start_time
 
-            if elapsed_time > 29.999999:
-                return True, expansions
-
-            if self.mrv_queue.size == 0:
-                return True, expansions
-            
-            node = self.get_next_square()
-
-            domain_list = deepcopy(self.domains[node.ycord][node.xcord])
-
+        if elapsed_time > 29.999999:
+            return True, expansions
         
-            for num in domain_list:
+        #if mrv queue is empty then the sudoku is finsished
+        if self.mrv_queue.size == 0:
+            return True, expansions
+        
+        #take the first node from the queue
+        node = self.get_next_square()
+
+        #Take a copy of the domains list for this cell so it doesnt change in the middle of the for loop
+        domain_list = deepcopy(self.domains[node.ycord][node.xcord])
+
+        #Go through all the numbers in the domain for this cell.
+        for num in domain_list:
+            expansions += 1
+            self.board[node.ycord][node.xcord] = num
+
+            #take a copy of the entire domains list and the mrv queue to use if we have to backtrack
+            temp = deepcopy(self.domains)
+            temp_mrv = deepcopy(self.mrv_queue)
+            forward_check = self.reduce_domains_value_mrv(num, node.ycord, node.xcord)
+
+            if forward_check:
+                #If the recursive call returns True that means this is the right num and you dont need to backtrack
+                success, expansions = self.backtracking_forward_check_search_mrv_deg(expansions)
+                if success:
+                    return True, expansions
                 
-                expansions += 1
-                self.board[node.ycord][node.xcord] = num
-                temp = deepcopy(self.domains)
-                temp_mrv = deepcopy(self.mrv_queue)
-                forward_check = self.reduce_domains_value_mrv(num, node.ycord, node.xcord)
-                if forward_check:
-                    success, expansions = self.backtracking_forward_check_search_mrv_deg(expansions)
-                    if success:
-                        return True, expansions
-                self.domains = temp
-                self.mrv_queue = temp_mrv
-            
-                self.board[node.ycord][node.xcord] = " "
-            
-            return False, expansions
+             # if backtracked we empty the cell, fix domains, fix the queue
+            self.domains = temp
+            self.mrv_queue = temp_mrv
+        
+            self.board[node.ycord][node.xcord] = " "
+        
+         #if no possible number is safe then we return False, a.k.a. we backtrack
+        return False, expansions
             
         
         

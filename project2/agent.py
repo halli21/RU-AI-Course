@@ -1,4 +1,5 @@
 import math
+import time
 
 from mrv_queue import MRV_Queue
 from copy import deepcopy
@@ -14,6 +15,10 @@ class Search:
         self.domains = domains
         self.mrv_queue = MRV_Queue()
         self.rand_queue = {4: [], 9: [], 16: []}
+
+        # For testing
+        self.start_time = None
+
         
 
 
@@ -72,6 +77,12 @@ class Search:
 # ------------- BACKTRACKING (BRUTE)
 
     def backtracking_brute_search(self, i = 0, j = 0, expansions = 0):
+
+        elapsed_time = time.time() - self.start_time
+
+        if elapsed_time > 29.999999:
+            return True, expansions
+
         if i == self.size - 1 and j == self.size:
             return True, expansions
      
@@ -132,6 +143,12 @@ class Search:
 
     def backtracking_search(self, i = 0, j = 0, expansions = 0):
 
+        elapsed_time = time.time() - self.start_time
+
+        if elapsed_time > 29.999999:
+            return True, expansions
+        
+
         if i == self.size - 1 and j == self.size:
             return True, expansions
      
@@ -162,6 +179,11 @@ class Search:
 
 
     def backtracking_forward_check_search(self, i = 0, j = 0, expansions = 0):
+
+        elapsed_time = time.time() - self.start_time
+
+        if elapsed_time > 29.999999:
+            return True, expansions
 
         if i == self.size - 1 and j == self.size:
             return True, expansions
@@ -205,7 +227,7 @@ class Search:
         # reduce domain of cells in the same row
         for x in range(self.size):
             if x != xcord and value in self.domains[ycord][x]:
-                if len(self.domains[ycord][x]) > 1:
+                if len(self.domains[ycord][x]) != 1:
                     self.domains[ycord][x].remove(value)
                     if self.board[ycord][x] == " ":
                         self.mrv_queue.update_node(ycord, x, len(self.domains[ycord][x]))
@@ -215,7 +237,7 @@ class Search:
         # reduce domain of cells in the same column
         for y in range(self.size):
             if y != ycord and value in self.domains[y][xcord]:
-                if len(self.domains[y][xcord]) > 1:
+                if len(self.domains[y][xcord]) != 1:
                     self.domains[y][xcord].remove(value)
                     if self.board[y][xcord] == " ":
                         self.mrv_queue.update_node(y, xcord, len(self.domains[y][xcord]))
@@ -226,19 +248,25 @@ class Search:
         block_y = (ycord // self.block_size) * self.block_size
         for x in range(block_y, block_y + self.block_size):
             for y in range(block_x, block_x + self.block_size):
-                if y != xcord and x != ycord and value in self.domains[x][y]:
-                    if len(self.domains[x][y]) > 1:
-                        self.domains[x][y].remove(value)
-                        if self.board[x][y] == " ":
-                            self.mrv_queue.update_node(x, y, len(self.domains[x][y]))
-                    else:
-                        flag = False
+                if y != xcord or x != ycord:
+                    if value in self.domains[x][y]:
+                        if len(self.domains[x][y]) != 1:
+                            self.domains[x][y].remove(value)
+                            if self.board[x][y] == " ":
+                                self.mrv_queue.update_node(x, y, len(self.domains[x][y]))
+                        else:
+                            flag = False
+
         return flag
     
 
 # ------ BACKTRACKING MRV
                              
     def backtracking_search_mrv(self, expansions = 0):
+        elapsed_time = time.time() - self.start_time
+
+        if elapsed_time > 29.999999:
+            return True, expansions
 
         if self.mrv_queue.size == 0:
             return True, expansions
@@ -270,6 +298,11 @@ class Search:
 
 
     def backtracking_forward_check_search_mrv(self, expansions = 0):
+
+        elapsed_time = time.time() - self.start_time
+
+        if elapsed_time > 29.999999:
+            return True, expansions
 
         if self.mrv_queue.size == 0:
             return True, expansions
@@ -368,6 +401,11 @@ class Search:
                              
     def backtracking_search_mrv_deg(self, expansions = 0):
 
+        elapsed_time = time.time() - self.start_time
+
+        if elapsed_time > 29.999999:
+            return True, expansions
+
         if self.mrv_queue.size == 0:
             return True, expansions
         
@@ -394,11 +432,55 @@ class Search:
         return False, expansions
             
 
+
+
+
+
+
+    def backtracking_forward_check_search_mrv_deg(self, expansions = 0):
+
+            elapsed_time = time.time() - self.start_time
+
+            if elapsed_time > 29.999999:
+                return True, expansions
+
+            if self.mrv_queue.size == 0:
+                return True, expansions
+            
+            node = self.get_next_square()
+
+            domain_list = deepcopy(self.domains[node.ycord][node.xcord])
+
+        
+            for num in domain_list:
+                
+                expansions += 1
+                self.board[node.ycord][node.xcord] = num
+                temp = deepcopy(self.domains)
+                temp_mrv = deepcopy(self.mrv_queue)
+                forward_check = self.reduce_domains_value_mrv(num, node.ycord, node.xcord)
+                if forward_check:
+                    success, expansions = self.backtracking_forward_check_search_mrv_deg(expansions)
+                    if success:
+                        return True, expansions
+                self.domains = temp
+                self.mrv_queue = temp_mrv
+            
+                self.board[node.ycord][node.xcord] = " "
+            
+            return False, expansions
+            
         
         
 # ------ BACKTRACKING RANDOM
 
     def backtracking_random(self, expansions = 0):
+
+        elapsed_time = time.time() - self.start_time
+
+        if elapsed_time > 29.999999:
+            return True, expansions
+        
         x = 0
         y = 1
 

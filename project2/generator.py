@@ -6,18 +6,22 @@ MAX_GEN_TIME = 5
  
 class Sudoku:
     def __init__(self, size, hints, seed=None):
+        #size of the sudoku
         self.size = size 
+        #size of each block in the sudoku 
         self.block_size = int(math.sqrt(size))
+        #how many hints are in the sudoku (how many numbers start in the sudoku)
         self.hints = hints
+        #a list of lists where each list in the list is a column in the sudoku
         self.board = [[" " for _ in range(size)] for _ in range(size)]
-
+        #seeds can be used to get a specific board. Only used for testing
         self.seed = seed
 
-
+    #checks if the board is valid
     def check_valid(self):
-        for x in range(self.size):
-            for y in range(self.size):
-                if self.board[x][y] == " ":
+        for y in range(self.size):
+            for x in range(self.size):
+                if self.board[y][x] == " ":
                     return False    
         return True
      
@@ -75,17 +79,17 @@ class Sudoku:
                 self.board[row + i][col + j] = num
      
 
-
+    #creates a random number
     def randomGenerator(self, num):
         return math.floor(random.random() * num + 1)
      
 
-
+    #checks if the numbercan be placed there
     def checkIfSafe(self, i, j, num):
         return (self.unUsedInRow(i, num) and self.unUsedInCol(j, num) and self.unUsedInBox(i - i % self.block_size, j - j % self.block_size, num))
      
 
-
+    #checks if the number can be in this row
     def unUsedInRow(self, i, num):
         for j in range(self.size):
             if self.board[i][j] == num:
@@ -93,7 +97,7 @@ class Sudoku:
         return True
      
 
-
+    #checks if the number can be in this column
     def unUsedInCol(self, j, num):
         for i in range(self.size):
             if self.board[i][j] == num:
@@ -130,7 +134,7 @@ class Sudoku:
         return False
  
 
-
+    #removing the appropriate amount of numbers according to the given hints
     def get_hints(self):
         count = (self.size * self.size) - self.hints
  
@@ -143,7 +147,7 @@ class Sudoku:
         return
     
 
-
+    
     def printSudoku(self):
         for i in range(self.size):
             for j in range(self.size):

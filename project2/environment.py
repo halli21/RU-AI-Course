@@ -19,7 +19,7 @@ class Environment:
         output += f"\nSearch run-time: {elapsed_time}"
         print(output)
     
-
+    #test for bakctracking brute search
     def backtracking_brute(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()
@@ -28,6 +28,7 @@ class Environment:
         #return expansions, elapsed_time
         self.print_results(expansions, elapsed_time)
 
+    #test for normal bakctracking search
     def backtracking(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()
@@ -37,6 +38,7 @@ class Environment:
         return expansions, elapsed_time
         self.print_results(expansions, elapsed_time)
 
+    #test for bakctracking search with forward checking
     def backtracking_forward_check(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()
@@ -46,6 +48,7 @@ class Environment:
         return expansions, elapsed_time
         #self.print_results(expansions, elapsed_time)
 
+    #test for backtracking with mrv
     def backtracking_mrv(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()
@@ -55,6 +58,7 @@ class Environment:
         self.print_results(expansions, elapsed_time)
         #return expansions, elapsed_time
 
+    #test for backtracking with foward checking and mrv
     def backtracking_forward_check_mrv(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()
@@ -64,7 +68,7 @@ class Environment:
         self.print_results(expansions, elapsed_time)
         #return expansions, elapsed_time
 
-
+    #test for backtracking with mrv and degree
     def backtracking_mrv_deg(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()
@@ -74,7 +78,7 @@ class Environment:
         self.print_results(expansions, elapsed_time)
         #return expansions, elapsed_time
 
-
+    #test for backtracking random search
     def backtracking_random(self):
         s = Search(self.size, self.current_state.board, self.current_state.domains)
         start_time = time.time()

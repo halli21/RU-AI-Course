@@ -11,7 +11,7 @@ def main():
     print(env.current_state)
 
 
-
+#menu that asks for the size of the sudoku
 def size_menu():
     if platform.system() == "Windows":
         os.system("cls")
@@ -31,6 +31,7 @@ def size_menu():
         return None
 
 
+#menu that asks for the difficulty of the sudoku
 def dif_menu():
     if platform.system() == "Windows":
         os.system("cls")
@@ -48,6 +49,8 @@ def dif_menu():
         time.sleep(3)
         return
 
+
+#menu that asks for the algorithm for the sudoku
 def alg_menu():
     if platform.system() == "Windows":
         os.system("cls")
@@ -66,6 +69,7 @@ def alg_menu():
         return
 
 
+#menu that asks for the heuristic for the sudoku
 def heu_menu(alg_choice):
     if platform.system() == "Windows":
         os.system("cls")
@@ -124,6 +128,7 @@ if __name__ == "__main__":
                         break
 
     
+    # if not quit then go to correct algorithm
     if heu_choice != None or alg_choice == "BacktrackBF":
         dif_choose = {"Easy": [7, 38, 118], "Medium": [6, 32, 100], "Hard": [5, 25, 77]}
         indexes = {4: 0, 9: 1, 16: 2}
@@ -155,9 +160,4 @@ if __name__ == "__main__":
                 env.backtracking_forward_check()
             elif heu_choice == "MRV":
                 env.backtracking_forward_check_mrv()
-            
-    """if platform.system() == "Windows":
-        os.system("pause")
-    else:
-        os.system("/bin/bash -c 'read -s -n 1 -p \"Press any key to continue...\"'")
-        print()"""
+        

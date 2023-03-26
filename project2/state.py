@@ -15,7 +15,7 @@ class State:
         #self.get_board()
 
 
-    
+    #creates a board for the state
     def get_board(self):
         
         generator = Sudoku(self.size, self.hints, self.seed)
@@ -46,13 +46,15 @@ class State:
         self.update_domain()
 
 
+    #sets the domain for the cells that are filled to that number
     def update_domain(self):
-        for x in range(self.size):
-            for y in range(self.size):
-                if self.board[x][y] != " ":
-                    self.domains[x][y] = [self.board[x][y]]
+        for y in range(self.size):
+            for x in range(self.size):
+                if self.board[y][x] != " ":
+                    self.domains[y][x] = [self.board[y][x]]
 
 
+    # if less than 10 it returns the same value, but if 10 or more then it returns the proper letter
     def get_value(self, value):
         value_dict = {10 : "A", 11 : "B", 12 : "C", 13 : "D", 14 : "E", 15 : "F", 16 : "G"}
 
@@ -65,6 +67,7 @@ class State:
         return value
 
 
+    #printing the sudoku board
     def __str__(self):
         output = ""
 

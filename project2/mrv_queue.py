@@ -1,5 +1,5 @@
 
-
+#A node representing a cell in the sudoku
 class MRV_Node:
     def __init__(self, value, ycord, xcord, next = None):
         self.value = value
@@ -16,6 +16,7 @@ class MRV_Queue:
         self.size = 0
         self.used = None
 
+    #inserts a node at the proper place in the queue. Ordered by vlaue
     def insert(self, node):
         if self.head == None:
             self.head = node
@@ -35,6 +36,7 @@ class MRV_Queue:
                     
         self.size += 1
 
+    # Takes the first item from the queue. 
     def pop(self):
         ret = self.head
         self.head = self.head.next
@@ -43,6 +45,7 @@ class MRV_Queue:
         return ret
     
 
+    #changes the value of the node with the x and y given
     def update_node(self, y, x, new_val):
         self.remove(y, x)
 
@@ -50,13 +53,7 @@ class MRV_Queue:
         self.insert(new_node)
 
     
-    def all_valid(self):
-        current = self.head
-        while current != None:
-            current.valid = True
-            current = current.next
-
-    
+    #removes the node ith the given x and y
     def remove(self, y, x):
         if self.head != None:
             current = self.head
@@ -72,6 +69,7 @@ class MRV_Queue:
                     current = current.next
 
     
+    # sees if a node with x,y is in the queue
     def includes(self, y, x):
         if self.head != None:
             current = self.head

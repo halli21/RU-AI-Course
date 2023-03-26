@@ -81,7 +81,7 @@ class Environment:
         s.set_up_search_rand()
         success, expansions = s.backtracking_random()
         elapsed_time = time.time() - start_time
-        self.print_results(expansions, elapsed_time)
+        #self.print_results(expansions, elapsed_time)
         return expansions, elapsed_time
 
 

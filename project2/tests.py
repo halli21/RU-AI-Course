@@ -89,6 +89,8 @@ def test(size, search, tests):
         print(f"\n\n----TESTING BACKTRACKING WITH MRV HEURISTIC ALGORTIHM AT SIZE {size}----")
     elif search == "backtracking_forward_check_mrv":
         print(f"\n\n----TESTING BACKTRACKING WITH FORWARD CHECK AND MRV HEURISTIC ALGORTIHM AT SIZE {size}----")
+    elif search == "backtracking_random":
+        print(f"\n\n----TESTING BACKTRACKING WITH RADNOM HEURISTIC ALGORTIHM AT SIZE {size}----")
 
     
 
@@ -140,7 +142,7 @@ def test(size, search, tests):
 
 
 if __name__ == "__main__":
-    test(4, "backtracking", TESTS_4x4)
+    test(9, "backtracking_random", TESTS_9x9)
     #f = open("16x16_MEDIUM.txt", "r")
 
     """

@@ -78,7 +78,7 @@ class Search:
 # ------------- BACKTRACKING (BRUTE)
     
     #Backtracking brute search just goes through the grid linearly and tries every number possible from 1 to the size selected (4, 9, 16)
-    def backtracking_brute_search(self, i = 0, j = 0, expansions = 0):
+    def backtracking_brute_search(self, y = 0, x = 0, expansions = 0):
 
         elapsed_time = time.time() - self.start_time
 
@@ -86,30 +86,30 @@ class Search:
             return True, expansions
 
         #if we have reached the end of the grid we return True meaning the sudoku is finished.
-        if i == self.size - 1 and j == self.size:
+        if y == self.size - 1 and x == self.size:
             return True, expansions
      
         #if you reach the end of a row we go down to the next row
-        if j == self.size:
-            i += 1
-            j = 0
+        if x == self.size:
+            y += 1
+            x = 0
      
         #If the cell is already filled we move on to the next cell
-        if self.board[i][j] != " ":
-            return self.backtracking_brute_search(i, j + 1, expansions)
+        if self.board[y][x] != " ":
+            return self.backtracking_brute_search(y, x + 1, expansions)
      
         #goes through all numbers in range
         for num in range(1, self.size + 1):
             expansions += 1
             #if current num can be placed it places it and moves on to the next cell
-            if self.checkIfSafe(i, j, num):
-                self.board[i][j] = num
-                success, expansions = self.backtracking_brute_search(i, j + 1, expansions)
+            if self.checkIfSafe(y, x, num):
+                self.board[y][x] = num
+                success, expansions = self.backtracking_brute_search(y, x + 1, expansions)
                 #If the recursive call returns True that means this is the right num and you dont need to backtrack
                 if success:
                     return True, expansions
                 #clears the cell if we have backtracked to this cell
-                self.board[i][j] = " "
+                self.board[y][x] = " "
         #if no possible number is safe then we return False, a.k.a. we backtrack
         return False, expansions
     
@@ -137,8 +137,9 @@ class Search:
                     flag = False
         
         #reduce domains of cells in the same square
-        block_x = (xcord // self.block_size) * self.block_size
         block_y = (ycord // self.block_size) * self.block_size
+        block_x = (xcord // self.block_size) * self.block_size
+    
         for y in range(block_y, block_y + self.block_size):
             for x in range(block_x, block_x + self.block_size):
                 if x != xcord or y != ycord:
@@ -153,7 +154,7 @@ class Search:
 
 
 
-    def backtracking_search(self, i = 0, j = 0, expansions = 0):
+    def backtracking_search(self, y = 0, x = 0, expansions = 0):
 
         elapsed_time = time.time() - self.start_time
 
@@ -162,40 +163,40 @@ class Search:
         
 
         #if we have reached the end of the grid we return True meaning the sudoku is finished.
-        if i == self.size - 1 and j == self.size:
+        if y == self.size - 1 and x == self.size:
             return True, expansions
      
         #if you reach the end of a row we go down to the next row
-        if j == self.size:
-            i += 1
-            j = 0
+        if x == self.size:
+            y += 1
+            x = 0
      
         #If the cell is already filled we move on to the next cell
-        if self.board[i][j] != " ":
-            return self.backtracking_search(i, j + 1, expansions)
+        if self.board[y][x] != " ":
+            return self.backtracking_search(y, x + 1, expansions)
      
         #Take a copy of the domains list for this cell so it doesnt change in the middle of the for loop
-        domain_list = deepcopy(self.domains[i][j])
+        domain_list = deepcopy(self.domains[y][x])
 
         #Go through all the numbers in the doamin for this cell.
         for num in domain_list:
-            if self.checkIfSafe(i, j, num):
+            if self.checkIfSafe(y, x, num):
                 expansions += 1
-                self.board[i][j] = num
+                self.board[y][x] = num
                 #take a copy of the entire domains list to use if we have to backtrack
                 temp = deepcopy(self.domains)
 
                 #remove the current num from the appropriate cells' domains
-                forward_check = self.reduce_domains_value(num, i, j)
+                forward_check = self.reduce_domains_value(num, y, x)
 
-                success, expansions = self.backtracking_search(i, j + 1, expansions)
+                success, expansions = self.backtracking_search(y, x + 1, expansions)
                 #If the recursive call returns True that means this is the right num and you dont need to backtrack
                 if success:
                     return True, expansions
                 
                 #clears the cell and fixes the domains if we have backtracked to this cell
                 self.domains = temp
-                self.board[i][j] = " "
+                self.board[y][x] = " "
 
         #if no possible number is safe then we return False, a.k.a. we backtrack
         return False, expansions

@@ -131,11 +131,12 @@ class Environment:
 
 if __name__ == "__main__":
     
-    env = Environment(16, 118, 1)
+    env = Environment(9, 32, 1)
     env.current_state.get_board()
   
     print(env.current_state)
-    env.backtracking_mrv_deg()
+    expansions, elapsed_time = env.backtracking()
+    env.print_results(expansions, elapsed_time)
 
 
 

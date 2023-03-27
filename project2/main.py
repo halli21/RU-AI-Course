@@ -3,14 +3,6 @@ import os
 import time
 import platform
 
-
-def main():
-    env = Environment(16, 55)
-    print(env.current_state)
-    env.backtracking_brute()
-    print(env.current_state)
-
-
 #menu that asks for the size of the sudoku
 def size_menu():
     if platform.system() == "Windows":

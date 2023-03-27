@@ -140,8 +140,8 @@ def test(size, search, tests):
             
             iterations += 1
 
-            print(f"Iteration {iterations} done")
-            print(env.current_state)
+            #print(f"Iteration {iterations} done")
+            #print(env.current_state)
 
         print(f"\n\n--{iterations} TESTS AT DIFFICULTY LEVEL {DIFFICULTIES_STR[count]}--")
 
@@ -149,17 +149,13 @@ def test(size, search, tests):
         print(f"Average expansions per second: {expansion_ps_sum / iterations}")
         print(f"Average search run-time: {elapsed_time_sum / iterations}")
 
-        print(f"{expansion_sum / iterations}")
-        print(f"{expansion_ps_sum / iterations}")
-        print(f"{elapsed_time_sum / iterations}")
 
 
 
 
 if __name__ == "__main__":
-    #test(4, "backtracking_brute", TESTS_4x4)
-    #test(9, "backtracking_forward_check_mrv_deg", TESTS_9x9)
-    test(16, "backtracking_brute", TESTS_16x16)
+    test(9, "backtracking_brute", TESTS_9x9)
+    
    
     """
     backtracking_brute

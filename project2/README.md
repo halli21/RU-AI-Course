@@ -27,3 +27,8 @@ state.py:
 
 tests.py:
     In this file you will find the function that created our test files and the function that ran the tests.
+
+    If you wish to run a set of tests you have to make a call to the 'test' function with the size of the board, name of the algorithm and the right list of file names.
+
+    For example: test(9, "backtracking_brute", TESTS_9x9)
+    Where 9 is the size, "backtracking_brute" is the algorithm and TESTS_9x9 is a list containing the local test files, TESTS_9x9 = ["9x9_EASY.txt", "9x9_MEDIUM.txt", "9x9_HARD.txt"].

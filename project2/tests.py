@@ -7,14 +7,11 @@ MEDIUM = 0.39 # 6, 32, 100
 HARD = 0.3    # 5, 25, 77
 
 
-#DIFFICULTIES = [HARD]
 DIFFICULTIES = [EASY, MEDIUM, HARD]
 DIFFICULTIES_STR = ["EASY", "MEDIUM", "HARD"]
 
 TESTS_4x4 = ["4x4_EASY.txt", "4x4_MEDIUM.txt", "4x4_HARD.txt"]
 TESTS_9x9 = ["9x9_EASY.txt", "9x9_MEDIUM.txt", "9x9_HARD.txt"]
-
-#TESTS_16x16 = ["16x16_HARD.txt"]
 TESTS_16x16 = ["16x16_EASY.txt", "16x16_MEDIUM.txt", "16x16_HARD.txt"]
 
 
@@ -79,11 +76,6 @@ def get_boards(file_name, size):
 
 
 
-
-
-
-# SOME SEEDS RESULT IN A FAILED GENERATION OF BOARD SO WE US WHILE LOOPS TO SKIP BAD SEEDS
-
 def test(size, search, tests):
 
     if search == "backtracking_forward_check":
@@ -116,7 +108,7 @@ def test(size, search, tests):
         
         boards_list = get_boards(tests[count], size)
     
-        while iterations < 20:
+        while iterations < 100:
             env = Environment(size, round((size * size) * level))
             env.current_state.board = boards_list[iterations]
             env.current_state.update_domain()
@@ -165,9 +157,9 @@ def test(size, search, tests):
 
 
 if __name__ == "__main__":
-    test(4, "backtracking_forward_check_mrv_deg", TESTS_4x4)
+    #test(4, "backtracking_brute", TESTS_4x4)
     #test(9, "backtracking_forward_check_mrv_deg", TESTS_9x9)
-    #test(16, "backtracking_mrv", TESTS_16x16)
+    test(16, "backtracking_brute", TESTS_16x16)
    
     """
     backtracking_brute

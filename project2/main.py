@@ -145,19 +145,26 @@ if __name__ == "__main__":
         print()
 
         if alg_choice == "BacktrackBF":
-            env.backtracking_brute()
+            expansions, elapsed_time = env.backtracking_brute()
+            env.print_results(expansions, elapsed_time)
+
 
         elif alg_choice == "Backtrack":
             if heu_choice == "MRV":
-                env.backtracking_mrv()
+                expansions, elapsed_time = env.backtracking_mrv()
+                env.print_results(expansions, elapsed_time)
             elif heu_choice == "MRVDegree":
-                env.backtracking_mrv_deg()
+                expansions, elapsed_time = env.backtracking_mrv_deg()
+                env.print_results(expansions, elapsed_time)
             elif heu_choice == "None":
-                env.backtracking()
+                expansions, elapsed_time = env.backtracking()
+                env.print_results(expansions, elapsed_time)
 
         elif alg_choice == "FwdCheck":
             if heu_choice == "None":
-                env.backtracking_forward_check()
+                expansions, elapsed_time = env.backtracking_forward_check()
+                env.print_results(expansions, elapsed_time)
             elif heu_choice == "MRV":
-                env.backtracking_forward_check_mrv()
+                expansions, elapsed_time = env.backtracking_forward_check_mrv()
+                env.print_results(expansions, elapsed_time)
         

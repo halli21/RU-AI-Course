@@ -82,7 +82,7 @@ class Search:
 
         elapsed_time = time.time() - self.start_time
 
-        if elapsed_time > 29.999999:
+        if elapsed_time >= 30:
             return True, expansions
 
         #if we have reached the end of the grid we return True meaning the sudoku is finished.
@@ -157,7 +157,7 @@ class Search:
 
         elapsed_time = time.time() - self.start_time
 
-        if elapsed_time > 29.999999:
+        if elapsed_time >= 30:
             return True, expansions
         
 
@@ -206,7 +206,7 @@ class Search:
 
         elapsed_time = time.time() - self.start_time
 
-        if elapsed_time > 29.999999:
+        if elapsed_time >= 30:
             return True, expansions
 
         #if we have reached the end of the grid we return True meaning the sudoku is finished.
@@ -305,7 +305,7 @@ class Search:
 
         elapsed_time = time.time() - self.start_time
 
-        if elapsed_time > 29.999999:
+        if elapsed_time >= 30:
             return True, expansions
         
         #if mrv queue is empty then the sudoku is finsished
@@ -351,7 +351,7 @@ class Search:
 
         elapsed_time = time.time() - self.start_time
 
-        if elapsed_time > 29.999999:
+        if elapsed_time >= 30:
             return True, expansions
 
         #if mrv queue is empty then the sudoku is finsished
@@ -468,7 +468,7 @@ class Search:
 
         elapsed_time = time.time() - self.start_time
 
-        if elapsed_time > 29.999999:
+        if elapsed_time >= 30:
             return True, expansions
 
         #if mrv queue is empty then the sudoku is finsished
@@ -516,7 +516,7 @@ class Search:
 
         elapsed_time = time.time() - self.start_time
 
-        if elapsed_time > 29.999999:
+        if elapsed_time >= 30:
             return True, expansions
         
         #if mrv queue is empty then the sudoku is finsished
@@ -562,7 +562,7 @@ class Search:
 
         elapsed_time = time.time() - self.start_time
 
-        if elapsed_time > 29.999999:
+        if elapsed_time >= 30:
             return True, expansions
         
         # helper values that make it more clear what is being called 

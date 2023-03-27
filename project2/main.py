@@ -77,11 +77,11 @@ def heu_menu(alg_choice):
         os.system("clear")
         print()
     if alg_choice == "Backtrack":
+        heuristics = [0, "MRV", "MRVDegree", "Random", "None"]
+        print("\n----Choose a heuristic----\n1) MRV\n2) MRV with degree\n3) Random\n4) None\n0) Go back")
+    elif alg_choice == "FwdCheck":
         heuristics = [0, "MRV", "MRVDegree", "None"]
         print("\n----Choose a heuristic----\n1) MRV\n2) MRV with degree\n3) None\n0) Go back")
-    elif alg_choice == "FwdCheck":
-        heuristics = [0, "MRV", "None"]
-        print("\n----Choose a heuristic----\n1) MRV\n2) None\n0) Go back")
     
     choice = input("Enter option: ")
 
@@ -156,6 +156,9 @@ if __name__ == "__main__":
             elif heu_choice == "MRVDegree":
                 expansions, elapsed_time = env.backtracking_mrv_deg()
                 env.print_results(expansions, elapsed_time)
+            elif heu_choice == "Random":
+                expansions, elapsed_time = env.backtracking_random()
+                env.print_results(expansions, elapsed_time)
             elif heu_choice == "None":
                 expansions, elapsed_time = env.backtracking()
                 env.print_results(expansions, elapsed_time)
@@ -166,5 +169,8 @@ if __name__ == "__main__":
                 env.print_results(expansions, elapsed_time)
             elif heu_choice == "MRV":
                 expansions, elapsed_time = env.backtracking_forward_check_mrv()
+                env.print_results(expansions, elapsed_time)
+            elif heu_choice == "MRVDegree":
+                expansions, elapsed_time = env.backtracking_forward_check_mrv_deg()
                 env.print_results(expansions, elapsed_time)
         

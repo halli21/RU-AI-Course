@@ -1,7 +1,7 @@
 Project 2
 by
 Arnar Bragi Bragason   -   arnarbb21@ru.is
-Haraldur Jón Friðriksson - haraldur21@ru.is
+Haraldur Jón Friðriksson - haraldurf21@ru.is
 
 We wanted to include this read me so you could get a quick overview of what to find in our files.
 
